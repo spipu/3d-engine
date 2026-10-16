@@ -2,6 +2,8 @@
 
 A 3D engine and a PWA core in pure JavaScript — no framework, no build step, no server side — with the examples that drive them.
 
+**See it: [test.spipu.net](https://test.spipu.net/)**
+
 This repository is the **reference** of both libraries: they are changed here first, then copied unchanged into the projects that use them ([Spipu-Doom](https://github.com/spipu/doom_js), Spipu-Racing and the other Spipu PWAs, which carry the whole or part of `js/webapp/`). A project never adapts a copy of its own.
 
 - `website/js/engine/` — **Spipu3D**, the 3D engine.
