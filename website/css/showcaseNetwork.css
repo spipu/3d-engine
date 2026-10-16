@@ -1,0 +1,216 @@
+/*
+ * The network examples: their own diagnostic page (roles, pairing stage, players, measures, log) laid over the
+ * whole screen, in the colours of the showcase.
+ */
+
+.showcase-network {
+    position: fixed;
+    inset: 0;
+    overflow: auto;
+    padding: 16px;
+    background: #0E141C;
+    color: #E6EDF3;
+    font-size: 14px;
+    font-family: "Helvetica", "Arial", sans-serif;
+}
+
+.showcase-network h1 {
+    color: #6FB7EA;
+    font-size: 18px;
+    font-weight: bold;
+    letter-spacing: 0.1em;
+    border-bottom: 1px solid rgba(111, 183, 234, 0.35);
+    padding-bottom: 8px;
+    margin: 0 0 8px 0;
+}
+
+.showcase-network button {
+    background: #1A2836;
+    color: #E6EDF3;
+    border: 1px solid #6FB7EA;
+    padding: 10px 14px;
+    margin: 4px 4px 4px 0;
+    font-size: 14px;
+    border-radius: 4px;
+}
+
+.showcase-network button:disabled {
+    opacity: 0.4;
+}
+
+.showcase-network label {
+    margin: 0 8px;
+}
+
+.showcase-network.hidden,
+.showcase-network .hidden,
+.showcase-network-scene.hidden,
+.showcase-network-overlay.hidden,
+.showcase-network-overlay .hidden {
+    display: none;
+}
+
+.showcase-network .status {
+    font-size: 16px;
+    color: #FFD27A;
+    margin: 8px 0;
+}
+
+.showcase-network .stage {
+    display: flex;
+    gap: 12px;
+    margin: 12px 0;
+    width: min(100%, 170vh);
+    max-width: 800px;
+}
+
+.showcase-network .stage.hidden {
+    display: none;
+}
+
+.showcase-network .stage.sub {
+    flex-direction: row-reverse;
+}
+
+.showcase-network .tile {
+    flex: 1 1 0;
+    min-width: 0;
+}
+
+.showcase-network .frame {
+    width: 100%;
+    aspect-ratio: 1;
+    visibility: hidden;
+    cursor: zoom-in;
+    display: block;
+}
+
+.showcase-network .frame.shown {
+    visibility: visible;
+}
+
+.showcase-network .frame.zoomed {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    aspect-ratio: auto;
+    z-index: 10;
+    cursor: zoom-out;
+}
+
+.showcase-network .caption {
+    text-align: center;
+    color: #FFD27A;
+    margin-top: 6px;
+    min-height: 1.4em;
+}
+
+.showcase-network .connecting {
+    flex: 1 1 0;
+    align-self: center;
+    text-align: center;
+    color: #FFD27A;
+    font-size: 16px;
+}
+
+.showcase-network .connecting:empty {
+    display: none;
+}
+
+.showcase-network .stage:has(> .connecting:not(:empty)) .tile {
+    display: none;
+}
+
+.showcase-network .qr {
+    background: #000;
+}
+
+.showcase-network .qr svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.showcase-network .camera {
+    object-fit: cover;
+    background: #000;
+}
+
+.showcase-network .camera.zoomed {
+    object-fit: contain;
+}
+
+.showcase-network table {
+    border-collapse: collapse;
+    margin: 12px 0;
+    width: 100%;
+    max-width: 900px;
+}
+
+.showcase-network td,
+.showcase-network th {
+    border-bottom: 1px solid #1F2B38;
+    padding: 4px 8px;
+    vertical-align: top;
+    word-break: break-all;
+    text-align: left;
+}
+
+.showcase-network th {
+    color: #A9C7DE;
+    font-weight: normal;
+}
+
+.showcase-network .metrics td:first-child {
+    color: #A9C7DE;
+    white-space: nowrap;
+    width: 35%;
+    word-break: normal;
+}
+
+/* The log is copied by hand when the clipboard refuses the report. */
+.showcase-network .log {
+    background: #0A0E13;
+    color: #8C8;
+    font-family: monospace;
+    font-size: 11px;
+    padding: 8px;
+    max-height: 240px;
+    overflow: auto;
+    white-space: pre-wrap;
+    max-width: 900px;
+    user-select: text;
+}
+
+/* The network game's scene: its own screen, under the lobby while hidden. */
+.showcase-network-scene {
+    touch-action: none;
+}
+
+.showcase-network-overlay {
+    position: fixed;
+    top: 8px;
+    right: 8px;
+    z-index: 5;
+    background: rgba(0, 0, 0, 0.6);
+    color: #E6EDF3;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 12px;
+}
+
+.showcase-network-players {
+    white-space: pre;
+}
+
+.showcase-network-overlay button {
+    background: #1A2836;
+    color: #E6EDF3;
+    border: 1px solid #6FB7EA;
+    padding: 4px 8px;
+    margin: 6px 0 0 0;
+    font-size: 12px;
+    border-radius: 4px;
+}

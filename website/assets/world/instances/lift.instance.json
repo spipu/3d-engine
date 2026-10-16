@@ -1,0 +1,19 @@
+{
+  "code": "lift",
+  "object": "./assets/world/objects/lift.obj.json",
+  "position": [1.75, 0.55, -13.4],
+  "rotation": [0, 0, 0],
+  "trigger": "action",
+  "loop":    false,
+  "collisionShape": "faces",
+  "interactionRadius": 2.8,
+  "damage": null,
+  "keyframes": [
+    {"t":  0.0, "translate": [0,  0,  0], "rotate": [0,    0, 0]},
+    {"t":  4.0, "translate": [0,  6,  0], "rotate": [0,    0, 0]},
+    {"t":  8.0, "translate": [0,  6, 10], "rotate": [0, -180, 0]},
+    {"t": 12.0, "translate": [0, -5, 10], "rotate": [0, -360, 0]},
+    {"t": 13.0, "translate": [0, -5,  0], "rotate": [0,    0, 0]},
+    {"t": 14.0, "translate": [0,  0,  0], "rotate": [0,    0, 0]}
+  ]
+}

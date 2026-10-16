@@ -1,0 +1,176 @@
+/*
+ * Spipu3D showcase theme of the menus: colours, fonts, borders and
+ * backgrounds of the app-menu-* structure (css/webapp/appMenu.css, loaded
+ * first). Every size is in em, like the structure.
+ */
+
+.app-menu-display {
+    background: radial-gradient(ellipse at 50% 35%, #1A2836 0%, #0E141C 70%);
+}
+
+.app-menu-display-transparent {
+    background: none;
+}
+
+.app-menu-screen-title {
+    color: #6FB7EA;
+    font-family: "Helvetica", "Arial", sans-serif;
+    font-size: 2.4em;
+    font-weight: bold;
+    letter-spacing: 0.2em;
+    text-shadow: 0 0 0.6em rgba(111, 183, 234, 0.45);
+    margin-bottom: 0.4em;
+}
+
+.app-menu-panel {
+    background: rgba(255, 255, 255, 0.04);
+    border: max(0.06em, 1px) solid rgba(111, 183, 234, 0.35);
+    border-radius: 0.3em;
+    padding: 1.2em 1.2em 1em;
+}
+
+.app-menu-subtitle {
+    color: #A9C7DE;
+    font-size: 0.95em;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    border-bottom: max(0.04em, 1px) solid rgba(111, 183, 234, 0.25);
+}
+
+.app-menu-list,
+.app-menu-modal-list-body {
+    scrollbar-color: rgba(111, 183, 234, 0.4) transparent;
+}
+
+.app-menu-list::-webkit-scrollbar-thumb,
+.app-menu-modal-list-body::-webkit-scrollbar-thumb {
+    background: rgba(111, 183, 234, 0.4);
+    border-radius: 0.1em;
+}
+
+.app-menu-item {
+    background: rgba(255, 255, 255, 0.03);
+    border: max(0.04em, 1px) solid rgba(111, 183, 234, 0.15);
+    border-radius: 0.2em;
+    color: #E6EDF3;
+}
+
+/* Hovering only moves the shared selection (mouse, keyboard and gamepad all
+   drive the same highlighted entry). Pre-brightened colors, no filter: a
+   filter here makes iOS re-run its text autosizing on the selected label. */
+.app-menu-item-selected {
+    background: rgba(111, 183, 234, 0.18);
+    border-color: #6FB7EA;
+}
+
+.app-menu-item-pressed {
+    background: rgba(111, 183, 234, 0.32);
+    border-color: #A9D6F5;
+}
+
+.app-menu-item-label {
+    font-size: 1.05em;
+    font-weight: bold;
+    letter-spacing: 0.05em;
+}
+
+.app-menu-item-infos {
+    color: rgba(230, 237, 243, 0.55);
+    font-size: 0.75em;
+    letter-spacing: 0.05em;
+}
+
+.app-menu-item-value {
+    color: #6FB7EA;
+    font-size: 0.9em;
+    font-weight: bold;
+}
+
+.app-menu-button {
+    background: #1A2836;
+    border: max(0.06em, 1px) solid #6FB7EA;
+    border-radius: 0.2em;
+    color: #E6EDF3;
+    font-family: "Helvetica", "Arial", sans-serif;
+    font-weight: bold;
+    font-size: 0.8em;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.app-menu-button:hover,
+.app-menu-button-focus {
+    background: #6FB7EA;
+    color: #0E141C;
+}
+
+.app-menu-button:disabled {
+    background: #2A3440;
+    color: #7D8A97;
+    border-color: #4A5866;
+}
+
+.app-menu-button-pressed,
+.app-menu-button-pressed:hover {
+    background: #A9D6F5;
+    color: #0E141C;
+}
+
+.app-menu-button-secondary {
+    background: transparent;
+}
+
+.app-menu-status {
+    color: #A9C7DE;
+    font-size: 0.8em;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.app-menu-status-error {
+    color: #E86A5C;
+}
+
+.app-menu-empty {
+    color: rgba(230, 237, 243, 0.5);
+    font-size: 0.85em;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+}
+
+.app-menu-footer {
+    color: rgba(230, 237, 243, 0.45);
+    font-size: 0.65em;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+}
+
+.app-menu-overlay {
+    background: rgba(5, 8, 12, 0.7);
+}
+
+.app-menu-modal {
+    background: #141D27;
+    border: max(0.06em, 1px) solid #6FB7EA;
+    border-radius: 0.3em;
+    color: #E6EDF3;
+    box-shadow: 0 0 2em rgba(0, 0, 0, 0.5);
+}
+
+.app-menu-modal-error {
+    color: #E86A5C;
+}
+
+.app-menu-modal-heading {
+    color: #6FB7EA;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+}
+
+.app-menu-modal-link {
+    color: #6FB7EA;
+}
+
+.app-menu-modal-link:hover {
+    color: #A9D6F5;
+}
