@@ -3,8 +3,8 @@ function loadApp() {
 
     appTranslator.addCatalog(AppMenuTranslations.CATALOG)
         .addCatalog(ShowcaseTranslations.CATALOG)
-        .setFallbackLanguage(ShowcaseTranslations.FALLBACK)
-        .setLanguage(ShowcaseTranslations.browserLanguage());
+        .setFallbackLanguage(ShowcaseTranslations.DEFAULT_LANGUAGE)
+        .setLanguage(ShowcaseTranslations.DEFAULT_LANGUAGE);
 
     new ShowcaseNavigator().start();
 }

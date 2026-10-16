@@ -445,20 +445,6 @@ class ShowcaseTranslations {
             }
         };
     }
-
-    /**
-     * The first of the browser's languages the catalog has, else the fallback.
-     *
-     * @returns {string}
-     */
-    static browserLanguage() {
-        const wanted = (navigator.languages ?? [navigator.language]).map((language) => language.slice(0, ShowcaseTranslations.CODE_LENGTH));
-
-        return (wanted.find((language) => ShowcaseTranslations.LANGUAGES.includes(language)) ?? ShowcaseTranslations.FALLBACK);
-    }
 }
 
-ShowcaseTranslations.LANGUAGES   = ['en', 'fr', 'it', 'es'];
-ShowcaseTranslations.FALLBACK    = 'en';
-// 'fr-FR' → 'fr'.
-ShowcaseTranslations.CODE_LENGTH = 2;
+ShowcaseTranslations.DEFAULT_LANGUAGE = 'en';

@@ -6,8 +6,7 @@
 class ShowcaseSettings extends AppSettings {
     static get DEFINITIONS() {
         return [
-            // The browser's language until one is chosen.
-            {key: ShowcaseSettings.LANGUAGE_KEY,  nameCode: 'settings.display.language',        type: 'list', default: ShowcaseTranslations.browserLanguage(), values: ShowcaseSettings.LANGUAGE_VALUES},
+            {key: ShowcaseSettings.LANGUAGE_KEY,  nameCode: 'settings.display.language',        type: 'list', default: ShowcaseTranslations.DEFAULT_LANGUAGE, values: ShowcaseSettings.LANGUAGE_VALUES},
             // The Controls page offers the devices available only; a device not available counts as the automatic choice.
             {key: ShowcaseSettings.DEVICE_KEY,    nameCode: 'settings.controls.device',         type: 'list', default: ShowcaseSettings.DEVICE_AUTO, values: [{code: ShowcaseSettings.DEVICE_AUTO, labelCode: 'device.auto'}, {code: 'keyboardMouse', labelCode: 'device.keyboardMouse'}, {code: 'gamepad', labelCode: 'device.gamepad'}, {code: 'virtualGamepad', labelCode: 'device.virtualPad'}]},
             {key: 'pad.y_inverse',                nameCode: 'settings.pad.yInverse',            type: 'bool', default: false},
