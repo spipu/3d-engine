@@ -1,5 +1,5 @@
 {
-    "version": "v1.0009",
+    "version": "v1.0011",
     "files": {
         "assets": [
             "/lib/libadlmidi/libadlmidi.dosbox.slim.processor.js",

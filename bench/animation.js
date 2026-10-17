@@ -519,7 +519,14 @@ class AnimationBench {
             const inWorld = (mirror ? this.Mat4.mirrorX(this.Mat4.create(), local) : local);
             const wanted  = placed.multiply(this.Mat4.toMatrix(new this.Matrix(), inWorld)).v.flat();
             this._near('placement follows the root motion' + (mirror ? ', mirrored' : ''), Math.max(...wanted.map((value, i) => Math.abs(value - socket[i]))), 0, FLOAT_EPSILON);
+            const back = walker.toLocal(this.Mat4.create(), walker.toWorld(this.Mat4.create(), local));
+            this._near('toLocal undoes toWorld' + (mirror ? ', mirrored' : ''), Math.max(...back.map((value, i) => Math.abs(value - local[i]))), 0, FLOAT_EPSILON);
         }
+        // A rotation and a translation times its rigid inverse (computed in place) give the identity.
+        const rigid = this.Mat4.fromTranslationRotationScale(this.Mat4.create(), [3, -1, 2], 0, this.Quaternion.fromDegrees(new Float32Array(4), 0, [20, 75, -40]), 0, [1, 1, 1], 0);
+        const undo  = this.Mat4.copy(this.Mat4.create(), rigid);
+        const none  = this.Mat4.multiply(this.Mat4.create(), rigid, this.Mat4.invertRigid(undo, undo));
+        this._near('rigid inverse', Math.max(...none.map((value, i) => Math.abs(value - this.Mat4.create()[i]))), 0, FLOAT_EPSILON);
     }
 
     // The clip with its root joint travelling at a speed (x, z metres a second), linearly over its duration.
