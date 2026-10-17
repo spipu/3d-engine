@@ -31,13 +31,13 @@ node bench/animation.js
 ```
 
 - `bootstrap.js` — every file served is declared in `js/libBootstrap.json`, every declared file exists once, each class after the class it extends.
-- `animation.js` — the skeletal animation primitives against known results (interpolations, rotation convention, joints, events, speed jumps, cross-fade, root motion, skinning, glTF reading, allocations by frame); all must come out `ok`.
+- `animation.js` — the skeletal animation primitives against known results (interpolations, rotation convention, joints, events, speed jumps, cross-fade, root motion, skinning, objects taken and laid over a transition, animated and static glTF reading, allocations by frame); all must come out `ok`.
 
 ## The Spipu3D engine
 
 `js/engine/` is a standalone 3D engine with no external dependency: it renders textured, lit 3D objects entirely in the browser through the HTML5 `<canvas>` API, and carries a full FPS physics engine (collision detection, gravity, jumping, crouching, animated objects) for one or several users sharing a world, each moved by its own command and blocking the others. It knows no game: it exposes parameterisable primitives (depth shading, per-instance light and render offset, external forces, screen sprites…) that a game feeds with its own constants.
 
-It also animates skeletal characters: models read from glTF 2.0 files (a skeleton, a skinned mesh, clips and their events, sockets for held objects), played with cross-fades from one clip to the next, moved by root motion (the clips' own travel, so the feet do not slide), objects held in a hand following it.
+It also animates skeletal characters: models read from glTF 2.0 files (a skeleton, a skinned mesh, clips and their events, sockets for held objects), played with cross-fades from one clip to the next, moved by root motion (the clips' own travel, so the feet do not slide), objects held in a hand following it, taken and laid down over a short transition so that they never jump. Static models (a mesh and its materials, the props such a character handles) are read from glTF too.
 
 Four rendering modes are available (the **Renderer** row of the objects list switches between them):
 
@@ -93,10 +93,11 @@ website/
         ├── collision.js         FPS physics: spatially indexed triangles, box blockers, mover pressure
         ├── spatialGrid.js       Uniform XZ grid over a static triangle set
         ├── animation/           Skeletal animation: matrices and quaternions, skeleton and pose, curves, clips and events, skinned mesh, player (cross-fade, root motion), animated instance
-        ├── entity/              Object3d, Billboard, Instance (keyframes/triggers/cycles), AnimatedModel, User, UserCommand, World, external forces
+        ├── entity/              Object3d, Billboard, Instance (keyframes/triggers/cycles), AnimatedModel, StaticModel, User, UserCommand, World, external forces
         ├── input/               FPS controller over the webapp devices: game actions, gamepad and touch layouts, and the command sampler
         ├── interaction/         Interaction bases (switch modes once/timed/toggle)
-        ├── loader/              URL or in-memory loaders (textures, objects, instances, interactions, world, glTF animated models)
+        ├── loader/              URL or in-memory loaders (textures, objects, instances, interactions, world, glTF animated and static models)
+        ├── model/               ModelMesh: the geometry of a model read from a file, made into an Object3d
         ├── sound/               Audio primitives: shared AudioContext with music/effects buses, in-memory PCM samples, tone synthesis, music player over a swappable synth contract
         ├── hud/                 HUD bases (debug overlay, screen flash)
         └── renderer/            webgl / full / flat / fast renderers

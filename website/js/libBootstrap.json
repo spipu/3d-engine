@@ -1,5 +1,5 @@
 {
-    "version": "v1.0008",
+    "version": "v1.0009",
     "files": {
         "assets": [
             "/lib/libadlmidi/libadlmidi.dosbox.slim.processor.js",
@@ -63,6 +63,7 @@
             "/js/engine/entity/abstractLoadedEntity.js",
             "/js/engine/entity/instance.js",
             "/js/engine/entity/animatedModel.js",
+            "/js/engine/entity/staticModel.js",
             "/js/engine/entity/interaction.js",
             "/js/engine/entity/face.js",
             "/js/engine/entity/light.js",
@@ -82,6 +83,8 @@
             "/js/engine/loader/textureLoader.js",
             "/js/engine/loader/worldLoader.js",
             "/js/engine/loader/gltfParser.js",
+            "/js/engine/loader/abstractGltfLoader.js",
+            "/js/engine/loader/staticModelLoader.js",
             "/js/engine/loader/animatedModelLoader.js",
             "/js/engine/sound/soundEngine.js",
             "/js/engine/sound/soundSample.js",
@@ -104,6 +107,7 @@
             "/js/engine/animation/animationEvent.js",
             "/js/engine/animation/animationClip.js",
             "/js/engine/animation/skeletonSocket.js",
+            "/js/engine/model/modelMesh.js",
             "/js/engine/animation/skinnedMesh.js",
             "/js/engine/animation/animationPlayer.js",
             "/js/engine/animation/animatedInstance.js",

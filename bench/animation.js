@@ -8,9 +8,10 @@
  * results: the three interpolations, the rotation convention against Matrix.composeInstanceTransform, the cursors
  * (forward, backward, two readers of one clip), the events crossed, the joints' matrices, the speed jumps it measures
  * (a linear clip has some, a Catmull-Rom cubic one has none), the skinning, the player (delay, loop, cross-fade, root
- * motion), an animated instance in the loader holding an object and moved by its root motion, a glTF read by the loader (values after the change of handedness,
- * a posed vertex worked out by hand, the files refused), and the allocations by frame (minor garbage collections counted
- * with a 1 MB young generation). Exits with 1 on a failure.
+ * motion), an animated instance in the loader holding an object, moved by its root motion, taking and laying an object
+ * over a transition, a glTF read by the loader (values after the change of handedness, an event's place, a posed vertex
+ * worked out by hand, the files refused), a static glTF (the same, its own refusals), and the allocations by frame
+ * (minor garbage collections counted with a 1 MB young generation). Exits with 1 on a failure.
  */
 
 const fs            = require('fs');
@@ -25,6 +26,7 @@ const SOURCES     = [
     'js/engine/entity/abstractLoadedEntity.js',
     'js/engine/entity/instance.js',
     'js/engine/entity/animatedModel.js',
+    'js/engine/entity/staticModel.js',
     'js/engine/entity/face.js',
     'js/engine/entity/object3d.js',
     'js/engine/entity/texture.js',
@@ -35,6 +37,8 @@ const SOURCES     = [
     'js/engine/loader/textureLoader.js',
     'js/engine/loader/worldLoader.js',
     'js/engine/loader/gltfParser.js',
+    'js/engine/loader/abstractGltfLoader.js',
+    'js/engine/loader/staticModelLoader.js',
     'js/engine/loader/animatedModelLoader.js',
     'js/engine/loader.js',
     'js/engine/matrix.js',
@@ -48,11 +52,12 @@ const SOURCES     = [
     'js/engine/animation/animationEvent.js',
     'js/engine/animation/animationClip.js',
     'js/engine/animation/skeletonSocket.js',
+    'js/engine/model/modelMesh.js',
     'js/engine/animation/skinnedMesh.js',
     'js/engine/animation/animationPlayer.js',
     'js/engine/animation/animatedInstance.js',
 ];
-const CLASSES = ['Matrix', 'Mat4', 'Quaternion', 'Skeleton', 'SkeletonPose', 'AnimationSampler', 'AnimationChannel', 'AnimationEvent', 'AnimationClip', 'SkeletonSocket', 'SkinnedMesh', 'AnimationPlayer', 'AnimatedModel', 'AnimatedInstance', 'GltfParser'];
+const CLASSES = ['Matrix', 'Mat4', 'Quaternion', 'Skeleton', 'SkeletonPose', 'AnimationSampler', 'AnimationChannel', 'AnimationEvent', 'AnimationClip', 'SkeletonSocket', 'ModelMesh', 'SkinnedMesh', 'StaticModel', 'AnimationPlayer', 'AnimatedModel', 'AnimatedInstance', 'GltfParser'];
 // Float32 storage: about 7 significant digits.
 const FLOAT_EPSILON     = 1e-4;
 const SAMPLE_STEP       = 0.0001;
@@ -65,6 +70,8 @@ const CUBIC_KEY_SIZE    = (3 * QUATERNION_SIZE);
 // Speed change from one sample to the next, against the fastest speed: a smooth curve stays near acceleration × step,
 // a jump does not shrink with the step.
 const SMOOTH_JUMP_RATIO = 0.01;
+// Speed of a transition's first and last millisecond, against its fastest: a smoothstep starts and ends near zero.
+const TRANSITION_EDGE_SPEED = 0.05;
 // A channel slower than it (units a second) stands still: its speed is the rounding of float32 keys, no ratio to it.
 const STILL_SPEED       = 0.001;
 // Cross-fade check, against the clip playing on alone.
@@ -103,8 +110,11 @@ class AnimationBench {
         this._crossFade();
         this._rootMotion();
         this._animatedInstance();
+        this._transitions();
         this._gltf();
         this._gltfRefusals();
+        this._staticGltf();
+        this._staticGltfRefusals();
         await this._allocations();
         console.log((this._failures === 0) ? 'animation: all checks passed' : ('animation: ' + this._failures + ' check(s) failed'));
 
@@ -337,8 +347,8 @@ class AnimationBench {
         const {skeleton} = this._chain(this.AnimationSampler.LINEAR);
         const mesh      = this._mesh(skeleton);
         const materials = [{color: [1, 0.5, 0, 1], doubleSided: false}, {color: [0, 0, 1, 0.5], doubleSided: true}];
-        const plain     = mesh.toObjectData(materials, this.AnimatedInstance.materialColor, false);
-        const mirrored  = mesh.toObjectData(materials, this.AnimatedInstance.materialColor, true);
+        const plain     = mesh.toObjectData(materials, this.ModelMesh.materialColor, false);
+        const mirrored  = mesh.toObjectData(materials, this.ModelMesh.materialColor, true);
         this._equal('a double-sided face drawn both ways', plain.faces.length, 3);
         this._equal('colors 0-255, alpha kept below 1', JSON.stringify(plain.faces.map((face) => face.color)), '[[255,127.5,0],[0,0,255,0.5],[0,0,255,0.5]]');
         this._equal('mirror: x negated', mirrored.points[2][0], -1);
@@ -568,6 +578,115 @@ class AnimationBench {
         return values;
     }
 
+    /**
+     * Taking and laying over a transition, the character standing still: the object starts where it was, is halfway
+     * at half the time (the smoothstep's middle), ends exactly at the socket or its place, starts and ends with no
+     * speed; laid, it stays when the character moves on.
+     */
+    _transitions() {
+        const {skeleton, clip} = this._chain(this.AnimationSampler.LINEAR);
+        const socketAt = this.Mat4.create();
+        socketAt[13]   = 0.5;
+        const model    = new this.AnimatedModel(0, null, () => {});
+        model.populate({
+            skeleton:  skeleton,
+            mesh:      this._mesh(skeleton),
+            materials: [{color: [1, 1, 1, 1], doubleSided: false}, {color: [1, 0, 0, 1], doubleSided: false}],
+            clips:     [clip],
+            sockets:   [new this.SkeletonSocket('hand', 2, socketAt)],
+        });
+        const character = new this.AnimatedInstance(model, {position: [10, 0, 5], rotation: [0, 90, 0]});
+        const objectId  = this.loader.objects().loadFromData(null, {points: [[0, 0, 0], [0.1, 0, 0], [0, 0.1, 0]], faces: [{pts: [1, 2, 3], color: [9, 9, 9]}]});
+        const itemId    = this.loader.instances().loadFromData(null, {object: objectId, position: [3, 0, -2], rotation: [0, 45, 0], trigger: 'none', keyframes: [], collisionShape: 'none'});
+        character.bind();
+        const item     = this.loader.instances().get(itemId);
+        const events   = [];
+        const where    = () => this.Matrix.composeInstanceTransform(item.getTransform()).v[3].slice(0, 3);
+        const gap      = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
+        const socket   = this.Mat4.create();
+        const step     = SAMPLE_STEP;
+        const duration = 0.2;
+        const start    = where();
+        character.getPlayer().play(clip, {time: 0.9, speed: 0});
+        character.update(0, events);
+        character.socketMatrix('hand', socket);
+        const goal = [socket[12], socket[13], socket[14]];
+        character.attach(item, 'hand', duration);
+        this._near('taking: starts where the object lay', gap(where(), start), 0, FLOAT_EPSILON);
+        const path = [where()];
+        for (let t = step; t < (duration + (2 * step)); t += step) {
+            character.update(step, events);
+            path.push(where());
+        }
+        const half = path[Math.round(duration / (2 * step))];
+        this._near('taking: halfway at half the time', gap(half, [(start[0] + goal[0]) / 2, (start[1] + goal[1]) / 2, (start[2] + goal[2]) / 2]), 0, FLOAT_EPSILON);
+        this._near('taking: ends at the socket', gap(path[path.length - 1], goal), 0, FLOAT_EPSILON);
+        const steps   = path.slice(1).map((p, i) => gap(p, path[i]));
+        const fastest = Math.max(...steps);
+        this._check('taking: no speed at the start nor at the end (' + (steps[0] / fastest).toFixed(4) + ', ' + (steps[Math.round(duration / step) - 1] / fastest).toFixed(4) + ')', ((steps[0] / fastest) < TRANSITION_EDGE_SPEED) && ((steps[Math.round(duration / step) - 1] / fastest) < TRANSITION_EDGE_SPEED));
+        this._check('taking: no jump on the way (' + this._seriesJump(path, step).toFixed(4) + ')', (this._seriesJump(path, step) < SMOOTH_JUMP_RATIO));
+
+        const place = this.Mat4.create();
+        place[12] = 1;
+        place[14] = -2;
+        character.detach(item, place, duration);
+        for (let t = 0; t < (duration + (2 * step)); t += step) {
+            character.update(step, events);
+        }
+        const laid = character.toWorld(this.Mat4.create(), place);
+        this._near('laying: ends at its place', gap(where(), [laid[12], laid[13], laid[14]]), 0, FLOAT_EPSILON);
+        character.place([20, 0, 5], [0, 0, 0]);
+        character.update(0.1, events);
+        this._near('laid: stays when the character moves on', gap(where(), [laid[12], laid[13], laid[14]]), 0, 0);
+    }
+
+    // A static glTF read through the loader: vertices mirrored, triangle turned, materials kept.
+    _staticGltf() {
+        const {gltf, binary} = AnimationBench._staticGltfModel();
+        const id    = this.loader.staticModels().loadFromData('bench_static', {gltf, binary});
+        const model = this.loader.staticModels().get(id);
+        const data  = model.toObjectData();
+        const close = (actual, expected) => Math.max(...expected.map((value, i) => Math.abs(value - actual[i])));
+        this._near('static: vertices mirrored', close(data.points.flat(), [-1, 0, 0, -2, 0, 0, -1, 1, 0]), 0, 0);
+        this._equal('static: triangle turned, both sides drawn', JSON.stringify(data.faces.map((face) => face.pts)), '[[1,3,2],[1,2,3]]');
+        this._equal('static: material color and extras', JSON.stringify([data.faces[0].color, model.getMaterials()[0].extras]), '[[255,0,0],{"paletteIndex":105}]');
+        const mirrored = model.toObjectData(this.ModelMesh.materialColor, true);
+        this._near('static mirrored: x back to the glTF side', close(mirrored.points.flat(), [1, 0, 0, 2, 0, 0, 1, 1, 0]), 0, 0);
+    }
+
+    _staticGltfRefusals() {
+        const cases = {
+            'a static model has no skin':   (gltf) => (gltf.skins = [{joints: [0]}]),
+            'exactly one mesh expected':    (gltf) => gltf.nodes.push({mesh: 0}),
+            'must not move the mesh':       (gltf) => (gltf.nodes[0].translation = [0, 1, 0]),
+            'joints and weights without':   (gltf) => (gltf.meshes[0].primitives[0].attributes.JOINTS_0 = 0),
+        };
+        for (const [cause, spoil] of Object.entries(cases)) {
+            const {gltf, binary} = AnimationBench._staticGltfModel();
+            spoil(gltf);
+            let message = '';
+            try {
+                this.GltfParser.parseStatic(gltf, binary);
+            } catch (error) {
+                message = error.message;
+            }
+            this._check('static refused: ' + cause + ' (' + message + ')', message.includes(cause));
+        }
+    }
+
+    // The animated bench model without its skin, its joints, its weights and its animation.
+    static _staticGltfModel() {
+        const {gltf, binary} = AnimationBench._gltfModel();
+        const primitive = gltf.meshes[0].primitives[0];
+        delete primitive.attributes.JOINTS_0;
+        delete primitive.attributes.WEIGHTS_0;
+        gltf.nodes = [{name: 'body', mesh: 0}];
+        delete gltf.skins;
+        delete gltf.animations;
+
+        return {gltf, binary};
+    }
+
     // A glTF read through the loader: every value with x mirrored, then a vertex posed in both handednesses.
     _gltf() {
         const {gltf, binary} = AnimationBench._gltfModel();
@@ -579,12 +698,15 @@ class AnimationBench {
         this._near('rest translation mirrored', close(skel.getRestTranslation(), [-1, 0, 0, 0, 1, 0]), 0, 0);
         this._near('inverse bind mirrored', close(skel.getInverseBind(0), [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1]), 0, 0);
         const object = this._fakeObject(model.getMesh());
-        const data   = model.getMesh().toObjectData(model.getMaterials(), this.AnimatedInstance.materialColor, false);
+        const data   = model.getMesh().toObjectData(model.getMaterials(), this.ModelMesh.materialColor, false);
         this._near('vertices mirrored', close(data.points.flat(), [-1, 0, 0, -2, 0, 0, -1, 1, 0]), 0, 0);
         this._equal('triangle turned the other way', JSON.stringify(model.getMesh().getFaces()[0].indices), '[0,2,1]');
         this._equal('material: color, double side, extras', JSON.stringify(model.getMaterials()[0]), '{"color":[1,0,0,1],"doubleSided":true,"extras":{"paletteIndex":105}}');
         const clip = model.getClip('swing');
         this._equal('event read', clip.getEvents().map((event) => event.getName() + ':' + event.getTime() + ':' + event.getData().a).join(), 'mid:0.5:1');
+        const placeData = clip.getEvents()[0].getData();
+        this._near('event place mirrored: translation', close(placeData.translation, [-1, 2, 3]), 0, 0);
+        this._near('event place mirrored: rotation', close(placeData.rotation, [0, -Math.SQRT1_2, 0, Math.SQRT1_2]), 0, FLOAT_EPSILON);
         const socket = model.getSocket('hand');
         this._near('socket on its joint, offset mirrored', close([socket.getJoint(), socket.getOffset()[12], socket.getOffset()[13]], [0, 0, 0.5]), 0, 0);
         const tangent = new Float32Array(3);
@@ -671,7 +793,7 @@ class AnimationBench {
                 name:     'swing',
                 channels: [{sampler: 0, target: {node: 2, path: 'rotation'}}, {sampler: 1, target: {node: 3, path: 'translation'}}],
                 samplers: [{input: times, output: turns, interpolation: 'LINEAR'}, {input: times, output: moves, interpolation: 'CUBICSPLINE'}],
-                extras:   {events: [{time: 0.5, name: 'mid', data: {a: 1}}]},
+                extras:   {events: [{time: 0.5, name: 'mid', data: {a: 1, translation: [1, 2, 3], rotation: [0, s, 0, s]}}]},
             }],
         };
 
