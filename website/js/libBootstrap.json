@@ -1,5 +1,5 @@
 {
-    "version": "v1.0012",
+    "version": "v1.0013",
     "files": {
         "assets": [
             "/lib/libadlmidi/libadlmidi.dosbox.slim.processor.js",
@@ -181,6 +181,20 @@
             "/js/webapp/menu/appMenuSettingsModal.js",
             "/js/webapp/menu/appMenuAbstractScreen.js",
             "/js/webapp/menu/appMenuTranslations.js",
+            "/js/webapp/net/netGameProtocol.js",
+            "/js/webapp/net/netGameAnswer.js",
+            "/js/webapp/net/netLobby.js",
+            "/js/webapp/net/netGameLinks.js",
+            "/js/webapp/net/netGameAvailability.js",
+            "/js/webapp/net/netGameMainSession.js",
+            "/js/webapp/net/netGameSubSession.js",
+            "/js/webapp/net/netTurnCycle.js",
+            "/js/webapp/net/netSessionNotice.js",
+            "/js/webapp/menu/appMenuNetMessages.js",
+            "/js/webapp/menu/appMenuNicknamePrompt.js",
+            "/js/webapp/menu/appMenuNetGate.js",
+            "/js/webapp/menu/appMenuPairingModal.js",
+            "/js/webapp/menu/appMenuLobbyModal.js",
             "/js/showcase/showcaseTranslations.js",
             "/js/showcase/showcaseDatabaseSchema.js",
             "/js/showcase/showcaseSettings.js",

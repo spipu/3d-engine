@@ -85,8 +85,8 @@ website/
     │   └── example/             The examples, each a class run like a level (load, scene, frame loop, back to the menu)
     ├── webapp/               PWA core — bootstrap/versioning, IndexedDB wrapper with versioned schema upgrades, persistent settings, translation catalog, content hash, wake lock, iOS viewport
     │   ├── input/               Raw input devices: keyboard, mouse, gamepad with rebindable actions, virtual touch gamepad laid out by the page
-    │   ├── menu/                Building blocks of DOM menus: letterboxed display, list navigation (mouse, keyboard, gamepad), modals, settings pages, on-screen keyboard, their texts
-    │   ├── net/                 Peer-to-peer network layer — WebRTC and loopback links, compact signals, pairing codes and flows, messages, ping, star sessions
+    │   ├── menu/                Building blocks of DOM menus: letterboxed display, list navigation (mouse, keyboard, gamepad), modals, settings pages, on-screen keyboard, the multiplayer entry, pairing and lobby modals, their texts
+    │   ├── net/                 Peer-to-peer network layer — WebRTC and loopback links, compact signals, pairing codes and flows, messages, ping, star sessions; the game session over them — protocol, lobby, main and sub sessions with the game's hooks, synchronous turn cycle, on-screen notice
     │   └── qr/                  QR code writing, camera scanning, camera probe and the pairing view (code shown, code read)
     └── engine/               Spipu3D — the game-agnostic 3D engine
         ├── engine3d.js          Viewport, lights, render loop, frustum culling
