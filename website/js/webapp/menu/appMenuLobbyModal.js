@@ -1,9 +1,10 @@
 /**
  * The lobby of a game session: its players in slot order with their ping and,
  * when the subs play, the colour of their slot, updated live. The main adds a player
- * (greyed out once the lobby is full), removes a sub by picking its line, and
- * starts from the bottom row, beside its back button; a sub only sees the
- * list — and that the game runs on the main — and can leave.
+ * (greyed out once the lobby is full, absent when the game admits none for now),
+ * removes a sub by picking its line, and starts from the bottom row, beside its
+ * back button; a sub only sees the list — and that the game runs on the main —
+ * and can leave.
  */
 class AppMenuLobbyModal extends AppMenuAbstractListModal {
     /**
@@ -25,7 +26,8 @@ class AppMenuLobbyModal extends AppMenuAbstractListModal {
 
     /**
      * @param {NetGameMainSession} session
-     * @param {{start: function, back: function|null}} actions - without back, Back closes the lobby
+     * @param {{start: function, back: function|null, addPlayers: (boolean|undefined)}} actions - without back, Back
+     *        closes the lobby; addPlayers false: no player is added from it (true by default)
      */
     openMain(session, actions) {
         this._isMain = true;
@@ -144,6 +146,9 @@ class AppMenuLobbyModal extends AppMenuAbstractListModal {
     }
 
     _addMainActions(lobby) {
+        if (this._actions.addPlayers === false) {
+            return;
+        }
         const add = this._nav.addItemIn(this._listEl, appTranslator.get('multiplayer.lobby.add'), () => this._addPlayerIfRoom());
         if (lobby.isFull()) {
             add.classList.add('app-menu-item-disabled');
