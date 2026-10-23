@@ -17,7 +17,8 @@ class MainMenuScreen extends AppMenuAbstractScreen {
     }
 
     _build() {
-        const {listEl} = this._buildPanel(appTranslator.get('menu.main'));
+        this._container.classList.add('app-menu-screen-home');
+        const {listEl} = this._buildSimpleMenu(MainMenuScreen.BRAND);
 
         this._addListItem(listEl, appTranslator.get('menu.examples'), () => {
             this._navigator.openExamples();

@@ -1,40 +1,79 @@
 /*
  * Spipu3D showcase theme of the menus: colours, fonts, borders and
  * backgrounds of the app-menu-* structure (css/webapp/appMenu.css, loaded
- * first). Every size is in em, like the structure.
+ * first). Every size is in em, like the structure. A sober midnight blue,
+ * Oswald for the titles, entries and buttons, the system sans-serif for the
+ * long texts.
  */
 
 .app-menu-display {
-    background: radial-gradient(ellipse at 50% 35%, #1A2836 0%, #0E141C 70%);
+    --app-menu-arrow-shift: 0.045em;
+    --app-menu-cap-height: 0.84em;
+    background: radial-gradient(ellipse at 50% 30%, #1A2836 0%, #0E141C 70%);
+    color: #E6EDF3;
+    font-family: system-ui, "Segoe UI", "Helvetica", "Arial", sans-serif;
 }
 
 .app-menu-display-transparent {
     background: none;
 }
 
+.app-menu-screen-title,
+.app-menu-header-title,
+.app-menu-subtitle,
+.app-menu-item,
+.app-menu-button,
+.app-menu-modal-heading,
+.app-menu-pairing-step-number {
+    font-family: "Oswald", "Arial Narrow", sans-serif;
+}
+
 .app-menu-screen-title {
     color: #6FB7EA;
-    font-family: "Helvetica", "Arial", sans-serif;
-    font-size: 2.4em;
-    font-weight: bold;
+    font-size: 1.1em;
+    font-weight: 600;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+}
+
+.app-menu-header-title {
+    color: #6FB7EA;
+    font-size: 3.2em;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    line-height: 1.1;
+    text-shadow: 0 0 0.5em rgba(111, 183, 234, 0.4);
+}
+
+.app-menu-header-subtitle {
+    margin-top: 0.4em;
+    color: #A9C7DE;
+    font-size: 0.85em;
     letter-spacing: 0.2em;
-    text-shadow: 0 0 0.6em rgba(111, 183, 234, 0.45);
-    margin-bottom: 0.4em;
+    text-transform: uppercase;
 }
 
 .app-menu-panel {
-    background: rgba(255, 255, 255, 0.04);
-    border: max(0.06em, 1px) solid rgba(111, 183, 234, 0.35);
-    border-radius: 0.3em;
-    padding: 1.2em 1.2em 1em;
+    background: linear-gradient(180deg, rgba(26, 40, 54, 0.75), rgba(14, 20, 28, 0.75));
+    border: max(0.04em, 1px) solid rgba(111, 183, 234, 0.25);
+    border-top: max(0.08em, 2px) solid #6FB7EA;
+    border-radius: 0.2em;
+    padding: 1.1em 1.2em 1em;
+    box-shadow: 0 0.6em 2em rgba(0, 0, 0, 0.45);
 }
 
 .app-menu-subtitle {
     color: #A9C7DE;
     font-size: 0.95em;
+    font-weight: 500;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    border-bottom: max(0.04em, 1px) solid rgba(111, 183, 234, 0.25);
+    border-bottom: max(0.04em, 1px) solid rgba(111, 183, 234, 0.2);
+}
+
+.app-menu-detail {
+    border-left: max(0.08em, 2px) solid #6FB7EA;
+    padding-left: 1.2em;
 }
 
 .app-menu-list,
@@ -48,76 +87,161 @@
     border-radius: 0.1em;
 }
 
+/* --- Entries --- */
 .app-menu-item {
-    background: rgba(255, 255, 255, 0.03);
-    border: max(0.04em, 1px) solid rgba(111, 183, 234, 0.15);
-    border-radius: 0.2em;
-    color: #E6EDF3;
+    border-left: max(0.08em, 2px) solid transparent;
+    color: #C9D6E2;
 }
 
 /* Hovering only moves the shared selection (mouse, keyboard and gamepad all
    drive the same highlighted entry). Pre-brightened colors, no filter: a
    filter here makes iOS re-run its text autosizing on the selected label. */
 .app-menu-item-selected {
-    background: rgba(111, 183, 234, 0.18);
-    border-color: #6FB7EA;
+    background: linear-gradient(90deg, rgba(111, 183, 234, 0.22), rgba(111, 183, 234, 0.02));
+    border-left-color: #6FB7EA;
+    color: #FFFFFF;
 }
 
 .app-menu-item-pressed {
-    background: rgba(111, 183, 234, 0.32);
-    border-color: #A9D6F5;
+    background: linear-gradient(90deg, rgba(111, 183, 234, 0.4), rgba(111, 183, 234, 0.08));
 }
 
 .app-menu-item-label {
-    font-size: 1.05em;
-    font-weight: bold;
-    letter-spacing: 0.05em;
+    font-size: 1em;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.app-menu-item-arrow,
+.app-menu-item-chevron {
+    color: #6FB7EA;
 }
 
 .app-menu-item-infos {
-    color: rgba(230, 237, 243, 0.55);
-    font-size: 0.75em;
-    letter-spacing: 0.05em;
+    color: rgba(230, 237, 243, 0.5);
+    font-family: system-ui, "Segoe UI", "Helvetica", "Arial", sans-serif;
+    font-size: 0.85em;
+    letter-spacing: 0.04em;
 }
 
 .app-menu-item-value {
     color: #6FB7EA;
     font-size: 0.9em;
-    font-weight: bold;
+    font-weight: 500;
 }
 
+/* Simple menu: no band, the label lights up between its two arrows. */
+.app-menu-list-simple .app-menu-item {
+    border-left: none;
+    color: rgba(230, 237, 243, 0.7);
+}
+
+.app-menu-list-simple .app-menu-item-label {
+    font-size: 1.25em;
+    letter-spacing: 0.14em;
+}
+
+.app-menu-list-simple .app-menu-item-selected {
+    background: none;
+    color: #FFFFFF;
+    text-shadow: 0 0 0.5em rgba(111, 183, 234, 0.8);
+}
+
+.app-menu-list-simple .app-menu-item-pressed {
+    background: none;
+    color: #A9D6F5;
+}
+
+.app-menu-item.app-menu-item-add {
+    border: max(0.06em, 1px) dashed rgba(111, 183, 234, 0.45);
+    color: #A9C7DE;
+}
+
+.app-menu-item.app-menu-item-add.app-menu-item-selected {
+    border-color: #6FB7EA;
+    color: #FFFFFF;
+}
+
+.app-menu-tag {
+    padding: 0.1em 0.5em;
+    border: max(0.04em, 1px) solid #6FB7EA;
+    border-radius: 0.2em;
+    color: #6FB7EA;
+    font-size: 0.8em;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+}
+
+.app-menu-ping {
+    color: #6FB7EA;
+    font-size: 0.8em;
+}
+
+.app-menu-ping[data-level="1"] {
+    color: #E86A5C;
+}
+
+.app-menu-ping[data-level="2"] {
+    color: #E8C35C;
+}
+
+/* --- Detail panel --- */
+.app-menu-fact-label {
+    color: rgba(230, 237, 243, 0.5);
+    font-size: 0.8em;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+}
+
+.app-menu-fact-value {
+    font-size: 0.85em;
+}
+
+/* --- Buttons: outlined secondary, filled primary --- */
 .app-menu-button {
-    background: #1A2836;
+    background: #6FB7EA;
     border: max(0.06em, 1px) solid #6FB7EA;
     border-radius: 0.2em;
-    color: #E6EDF3;
-    font-family: "Helvetica", "Arial", sans-serif;
-    font-weight: bold;
+    color: #0E141C;
+    font-weight: 600;
     font-size: 0.8em;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
 }
 
 .app-menu-button:hover,
 .app-menu-button-focus {
-    background: #6FB7EA;
-    color: #0E141C;
-}
-
-.app-menu-button:disabled {
-    background: #2A3440;
-    color: #7D8A97;
-    border-color: #4A5866;
-}
-
-.app-menu-button-pressed,
-.app-menu-button-pressed:hover {
     background: #A9D6F5;
-    color: #0E141C;
+    border-color: #A9D6F5;
+    box-shadow: 0 0 0.9em rgba(111, 183, 234, 0.55);
 }
 
 .app-menu-button-secondary {
     background: transparent;
+    border-color: rgba(111, 183, 234, 0.5);
+    color: #C9D6E2;
+}
+
+.app-menu-button-secondary:hover,
+.app-menu-button-secondary.app-menu-button-focus {
+    background: rgba(111, 183, 234, 0.12);
+    border-color: #6FB7EA;
+    color: #FFFFFF;
+}
+
+.app-menu-button:disabled {
+    background: transparent;
+    border-color: #4A5866;
+    color: #7D8A97;
+    box-shadow: none;
+}
+
+.app-menu-button-pressed,
+.app-menu-button-pressed:hover {
+    background: #FFFFFF;
+    border-color: #FFFFFF;
+    color: #0E141C;
 }
 
 .app-menu-status {
@@ -139,22 +263,53 @@
 }
 
 .app-menu-footer {
-    color: rgba(230, 237, 243, 0.45);
+    color: rgba(230, 237, 243, 0.6);
     font-size: 0.65em;
     letter-spacing: 0.15em;
     text-transform: uppercase;
 }
 
+/* --- Tabs --- */
+.app-menu-button.app-menu-tab {
+    background: transparent;
+    border-color: transparent;
+    color: rgba(230, 237, 243, 0.6);
+}
+
+.app-menu-button.app-menu-tab:hover,
+.app-menu-button.app-menu-tab.app-menu-button-focus {
+    border-color: #6FB7EA;
+    color: #FFFFFF;
+}
+
+.app-menu-button.app-menu-tab-active {
+    background: rgba(111, 183, 234, 0.18);
+    color: #6FB7EA;
+    box-shadow: inset 0 -0.15em 0 #6FB7EA;
+}
+
+/* --- Modal --- */
 .app-menu-overlay {
-    background: rgba(5, 8, 12, 0.7);
+    background: rgba(5, 8, 12, 0.72);
 }
 
 .app-menu-modal {
-    background: #141D27;
-    border: max(0.06em, 1px) solid #6FB7EA;
-    border-radius: 0.3em;
+    background: linear-gradient(180deg, #1A2633, #111922);
+    border: max(0.04em, 1px) solid rgba(111, 183, 234, 0.25);
+    border-top: max(0.1em, 2px) solid #6FB7EA;
+    border-radius: 0.2em;
     color: #E6EDF3;
-    box-shadow: 0 0 2em rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0.8em 2.4em rgba(0, 0, 0, 0.6);
+}
+
+.app-menu-modal-message {
+    line-height: 1.45;
+}
+
+.app-menu-modal-question {
+    color: #FFF;
+    font-size: 1.15em;
+    font-weight: 600;
 }
 
 .app-menu-modal-error {
@@ -163,6 +318,7 @@
 
 .app-menu-modal-heading {
     color: #6FB7EA;
+    font-weight: 500;
     letter-spacing: 0.15em;
     text-transform: uppercase;
 }
@@ -173,4 +329,64 @@
 
 .app-menu-modal-link:hover {
     color: #A9D6F5;
+}
+
+.app-menu-modal-detail {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 0.2em;
+}
+
+/* --- On-screen keyboard: the key size of the structure, only the skin --- */
+.app-menu-text-field {
+    background: rgba(0, 0, 0, 0.35);
+    border: max(0.04em, 1px) solid rgba(111, 183, 234, 0.4);
+    border-radius: 0.2em;
+}
+
+.app-menu-text-caret {
+    background: #6FB7EA;
+}
+
+.app-menu-button.app-menu-key {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(111, 183, 234, 0.3);
+    color: #E6EDF3;
+}
+
+.app-menu-button.app-menu-key:hover,
+.app-menu-button.app-menu-key.app-menu-button-focus {
+    background: rgba(111, 183, 234, 0.25);
+    border-color: #6FB7EA;
+}
+
+.app-menu-button.app-menu-key.app-menu-button-pressed {
+    background: #6FB7EA;
+    color: #0E141C;
+}
+
+/* --- Pairing --- */
+.app-menu-pairing-step-number {
+    background: #6FB7EA;
+    color: #0E141C;
+    font-weight: 600;
+    font-size: 0.8em;
+}
+
+.app-menu-pairing-caption {
+    color: #A9C7DE;
+}
+
+.app-menu-pairing-camera {
+    background: #000000;
+}
+
+.app-menu-pairing-viewfinder,
+.app-menu-pairing-zoom {
+    color: #6FB7EA;
+}
+
+.app-menu-pairing-scan {
+    background: #6FB7EA;
+    box-shadow: 0 0 0.6em #6FB7EA;
+    opacity: 0.8;
 }

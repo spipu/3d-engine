@@ -9,7 +9,7 @@ This repository is the **reference** of both libraries: they are changed here fi
 - `website/js/engine/` — **Spipu3D**, the 3D engine.
 - `website/js/webapp/` and `website/css/webapp/` — the **PWA core**: bootstrap and versions, offline cache, storage, settings, translations, input devices, menu building blocks, network, QR codes.
 
-The application itself (`index.html`) is a PWA built on that core, driven by mouse, keyboard, gamepad or touch: **Examples**, **Options** (language, controls of every device, saved in the browser) and **About**. Every example runs inside it like a level, its files cached with the rest for offline use; Escape, the gamepad's Start or the menu button of the touch pad brings the menu back.
+The application itself (`index.html`) is a PWA built on that core, driven by mouse, keyboard, gamepad or touch: **Examples**, **Options** in tabs (display: language and renderer of every example; controls of every device; saved in the browser) and **About**. Every example runs inside it like a level, its files cached with the rest for offline use; Escape, the gamepad's Start or the menu button of the touch pad brings the menu back.
 
 ## Run it locally
 
@@ -39,7 +39,7 @@ node bench/animation.js
 
 It also animates skeletal characters: models read from glTF 2.0 files (a skeleton, a skinned mesh, clips and their events, sockets for held objects), played with cross-fades from one clip to the next, moved by root motion (the clips' own travel, so the feet do not slide), objects held in a hand following it, taken and laid down over a short transition so that they never jump. Static models (a mesh and its materials, the props such a character handles) are read from glTF too.
 
-Four rendering modes are available (the **Renderer** row of the objects list switches between them):
+Four rendering modes are available (the **Renderer** of *Options › Display* switches every example between them):
 
 | Mode | Description |
 |---|---|
@@ -55,7 +55,7 @@ Whatever the mode, instances are frustum-culled in camera space before any per-v
 | Example | Description |
 |---|---|
 | Still render | The Lotus F1, no interaction |
-| Objects | A list of objects and the renderer to draw them with, then the object alone, turned by the mouse, a finger or the movement stick |
+| Objects | A list of objects, then the object alone, turned by the mouse, a finger or the movement stick |
 | Lights | Coloured light sources — move them around |
 | Van | Drive the van |
 | Labyrinth | First-person navigation inside a 3D labyrinth, FPS physics |
@@ -78,6 +78,7 @@ website/
 ├── icon/                     The standard icon set, drawn from icon.svg
 ├── lib/libadlmidi/           Vendored libADLMIDI-JS OPL3 synthesizer (LGPL v3 — own LICENSE.md + modification README.md)
 ├── lib/zxing-wasm/           Vendored zxing-wasm QR code reader and writer (MIT, Apache-2.0, BSD-3 — own LICENSE.md + README.md)
+├── lib/oswald/               Vendored Oswald font of the menus (SIL OFL 1.1 — own LICENSE.md + README.md)
 └── js/
     ├── libBootstrap.json     The bootstrap definition: version + every file of the application (engine, PWA core, showcase, assets)
     ├── main.js               Entry point
@@ -85,7 +86,7 @@ website/
     │   └── example/             The examples, each a class run like a level (load, scene, frame loop, back to the menu)
     ├── webapp/               PWA core — bootstrap/versioning, IndexedDB wrapper with versioned schema upgrades, persistent settings, translation catalog, content hash, wake lock, iOS viewport
     │   ├── input/               Raw input devices: keyboard, mouse, gamepad with rebindable actions, virtual touch gamepad laid out by the page
-    │   ├── menu/                Building blocks of DOM menus: letterboxed display, list navigation (mouse, keyboard, gamepad), modals, settings pages, on-screen keyboard, the multiplayer entry, pairing and lobby modals, their texts
+    │   ├── menu/                Building blocks of DOM menus: letterboxed display, list navigation (mouse, keyboard, gamepad, touch), modals, settings pages, on-screen keyboard, the multiplayer entry, pairing and lobby modals, their texts
     │   ├── net/                 Peer-to-peer network layer — WebRTC and loopback links, compact signals, pairing codes and flows, messages, ping, star sessions; the game session over them — protocol, lobby, main and sub sessions with the game's hooks, synchronous turn cycle, on-screen notice
     │   └── qr/                  QR code writing, camera scanning, camera probe and the pairing view (code shown, code read)
     └── engine/               Spipu3D — the game-agnostic 3D engine
@@ -174,4 +175,5 @@ This program is distributed under the MIT License — see the [./LICENSE.md](./L
 
 * the `website/lib/libadlmidi/` directory (the vendored libADLMIDI-JS music synthesizer), distributed under the LGPL v3, with its own LICENSE.md and attribution README.
 * the `website/lib/zxing-wasm/` directory (the vendored QR code library), distributed under the MIT, Apache-2.0 and BSD-3-Clause licences of its three components, all permissive, with its own LICENSE.md.
+* the `website/lib/oswald/` directory (the Oswald font of the menus), distributed under the SIL Open Font License 1.1, with its own LICENSE.md and attribution README.
 * the motion capture of `website/assets/models/character.bin`, taken from the [CMU Graphics Lab Motion Capture Database](http://mocap.cs.cmu.edu) (created with funding from NSF EIA-0196217), free to use with this credit.

@@ -1,7 +1,7 @@
 /**
- * Options of the showcase: show() opens the options root (language, controls, reset), showAbout() a standalone page.
- * Adds to AppMenuSettingsModal the Controls page (device choice, then the settings of that device; their key, button
- * and axis captures are the socle's).
+ * Options of the showcase: show() opens the tabs (display, controls) with a reset button, showAbout() a standalone
+ * page. Adds to AppMenuSettingsModal the Controls page (device choice, then the settings of that device; their key,
+ * button and axis captures are the socle's).
  */
 class ShowcaseOptionsModal extends AppMenuSettingsModal {
     /**
@@ -14,7 +14,10 @@ class ShowcaseOptionsModal extends AppMenuSettingsModal {
     }
 
     show() {
-        return this._open(false, 'menu.options', () => this._buildRoot());
+        return this._openTabs('menu.options', [
+            {titleCode: 'options.display', builder: () => this._buildDisplay()},
+            {titleCode: 'options.controls', builder: () => this._buildControls()}
+        ], {labelCode: 'options.reset', action: () => this._confirmReset()});
     }
 
     showAbout() {
@@ -23,13 +26,8 @@ class ShowcaseOptionsModal extends AppMenuSettingsModal {
 
     // --- Pages ---
 
-    _buildRoot() {
-        const list = this._addList();
-
-        this._addSettingItem(list, showcaseSettings.getDefinition(ShowcaseSettings.LANGUAGE_KEY));
-        this._nav.addItemIn(list, appTranslator.get('options.controls'), () => this._pushPage('options.controls', () => this._buildControls()));
-        this._nav.addItemIn(list, appTranslator.get('options.reset'), () => this._confirmReset());
-        this._nav.selectFirst();
+    _buildDisplay() {
+        this._buildSettingsList(showcaseSettings.getDefinitions('display.'));
     }
 
     _confirmReset() {
@@ -37,7 +35,7 @@ class ShowcaseOptionsModal extends AppMenuSettingsModal {
             showcaseSettings.resetAll();
             this._applySettings();
             this._renderPage();
-        }, null, appTranslator.get('menu.back'));
+        }, null, null, true, appTranslator.get('options.resetDetail'));
     }
 
     _buildControls() {
@@ -48,7 +46,7 @@ class ShowcaseOptionsModal extends AppMenuSettingsModal {
         }, (dir) => {
             this._stepDevice(inputs, dir);
         });
-        AppMenuDom.addText(device, 'app-menu-item-value', this._deviceChoiceLabel(this._currentDeviceChoice(inputs), inputs));
+        AppMenuDom.addValue(device, this._deviceChoiceLabel(this._currentDeviceChoice(inputs), inputs), true);
 
         this._shownDevices = this._devicesState(inputs);
         for (const prefix of ShowcaseOptionsModal.SETTING_PREFIXES_BY_MODE[inputs.getMode()]) {

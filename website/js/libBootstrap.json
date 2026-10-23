@@ -1,10 +1,11 @@
 {
-    "version": "v1.0018",
+    "version": "v1.0049",
     "files": {
         "assets": [
             "/lib/libadlmidi/libadlmidi.dosbox.slim.processor.js",
             "/lib/libadlmidi/libadlmidi.dosbox.slim.core.wasm",
             "/lib/zxing-wasm/zxing_full.wasm",
+            "/lib/oswald/oswald.woff2",
             "/assets/models/character.bin",
             "/assets/models/character.gltf",
             "/assets/objects/car.obj.json",

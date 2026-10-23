@@ -3,14 +3,12 @@
  */
 class ObjectViewerExample extends AbstractShowcaseExample {
     /**
-     * @param {string} code     - a file of assets/objects/, by name
-     * @param {string} renderer - Object3dRendererList code
+     * @param {string} code - a file of assets/objects/, by name
      */
-    constructor(code, renderer) {
+    constructor(code) {
         super();
 
         this._code      = code;
-        this._renderer  = renderer;
         this._angleX    = 0;
         this._angleY    = 0;
         this._drag      = null;
@@ -23,7 +21,7 @@ class ObjectViewerExample extends AbstractShowcaseExample {
     }
 
     _init() {
-        const engine = this._createScene({padControls: ['move'], renderer: this._renderer});
+        const engine = this._createScene({padControls: ['move']});
         const object = loader.objects().getByCode(this._code);
 
         engine.setBackground(35, 35, 35);

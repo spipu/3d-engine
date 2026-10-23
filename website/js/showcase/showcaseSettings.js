@@ -1,12 +1,13 @@
 /**
- * Persistent settings of the showcase, stored in the `setting` store of the spipu3d IndexedDB base: the language and
- * the controls the examples use (moving, looking, jumping, crouching, using, the pause back to the menu). The options
- * are built from DEFINITIONS; applyToInputs hands the controls to the engine's Inputs.
+ * Persistent settings of the showcase, stored in the `setting` store of the spipu3d IndexedDB base: the language, the
+ * renderer of the examples and the controls they use (moving, looking, jumping, crouching, using, the pause back to
+ * the menu). The options are built from DEFINITIONS; applyToInputs hands the controls to the engine's Inputs.
  */
 class ShowcaseSettings extends AppSettings {
     static get DEFINITIONS() {
         return [
             {key: ShowcaseSettings.LANGUAGE_KEY,  nameCode: 'settings.display.language',        type: 'list', default: ShowcaseTranslations.DEFAULT_LANGUAGE, values: ShowcaseSettings.LANGUAGE_VALUES},
+            {key: ShowcaseSettings.RENDERER_KEY,  nameCode: 'settings.display.renderer',        type: 'list', default: 'webgl', values: ShowcaseSettings.RENDERER_VALUES},
             // The Controls page offers the devices available only; a device not available counts as the automatic choice.
             {key: ShowcaseSettings.DEVICE_KEY,    nameCode: 'settings.controls.device',         type: 'list', default: ShowcaseSettings.DEVICE_AUTO, values: [{code: ShowcaseSettings.DEVICE_AUTO, labelCode: 'device.auto'}, {code: 'keyboardMouse', labelCode: 'device.keyboardMouse'}, {code: 'gamepad', labelCode: 'device.gamepad'}, {code: 'virtualGamepad', labelCode: 'device.virtualPad'}]},
             {key: 'pad.y_inverse',                nameCode: 'settings.pad.yInverse',            type: 'bool', default: false},
@@ -68,10 +69,13 @@ class ShowcaseSettings extends AppSettings {
 }
 
 ShowcaseSettings.LANGUAGE_KEY     = 'display.language';
+ShowcaseSettings.RENDERER_KEY     = 'display.renderer';
 ShowcaseSettings.DEVICE_KEY       = 'controls.device';
 ShowcaseSettings.DEVICE_AUTO      = 'auto';
 // Language autonyms are not translated.
 ShowcaseSettings.LANGUAGE_VALUES  = Object.freeze([{code: 'en', label: 'English'}, {code: 'fr', label: 'Français'}, {code: 'it', label: 'Italiano'}, {code: 'es', label: 'Español'}]);
+// Object3dRendererList codes; their names are not translated.
+ShowcaseSettings.RENDERER_VALUES  = Object.freeze([{code: 'webgl', label: 'WebGL'}, {code: 'full', label: 'Full'}, {code: 'flat', label: 'Flat'}, {code: 'fast', label: 'Fast'}]);
 // Same choices as doom_js's touch sticks.
 ShowcaseSettings.DEAD_ZONE_VALUES = AppSettings.percentValues([0, 2.5, 5, 7.5, 10, 15]);
 

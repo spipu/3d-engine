@@ -7,12 +7,6 @@ class ShowcaseTranslations {
     static get CATALOG() {
         return {
             // --- Main menu ---
-            'menu.main': {
-                fr: 'Menu principal',
-                en: 'Main menu',
-                it: 'Menu principale',
-                es: 'Menú principal'
-            },
             'menu.examples': {
                 fr: 'Exemples',
                 en: 'Examples',
@@ -32,12 +26,18 @@ class ShowcaseTranslations {
                 es: 'Acerca de'
             },
             'menu.storageUnavailable': {
-                fr: 'Stockage navigateur indisponible — les paramétrages ne seront pas enregistrés.',
+                fr: 'Stockage navigateur indisponible — les paramètres ne seront pas enregistrés.',
                 en: 'Browser storage unavailable — the settings will not be saved.',
                 it: 'Archiviazione del browser non disponibile — le impostazioni non verranno salvate.',
                 es: 'Almacenamiento del navegador no disponible — los ajustes no se guardarán.'
             },
             // --- Options ---
+            'options.display': {
+                fr: 'Affichage',
+                en: 'Display',
+                it: 'Visualizzazione',
+                es: 'Pantalla'
+            },
             'options.controls': {
                 fr: 'Contrôles',
                 en: 'Controls',
@@ -45,22 +45,34 @@ class ShowcaseTranslations {
                 es: 'Controles'
             },
             'options.reset': {
-                fr: 'Réinitialiser tous les paramétrages',
-                en: 'Reset every setting',
+                fr: 'Réinitialiser tous les paramètres',
+                en: 'Reset all settings',
                 it: 'Reimposta tutte le impostazioni',
                 es: 'Restablecer todos los ajustes'
             },
             'options.resetConfirm': {
-                fr: 'Supprimer tous les paramétrages enregistrés ?',
+                fr: 'Supprimer tous les paramètres enregistrés ?',
                 en: 'Delete every saved setting?',
                 it: 'Eliminare tutte le impostazioni salvate?',
                 es: '¿Eliminar todos los ajustes guardados?'
+            },
+            'options.resetDetail': {
+                fr: 'Tous les réglages reviennent à leur valeur par défaut, contrôles compris.',
+                en: 'Every setting goes back to its default, the controls included.',
+                it: 'Tutte le impostazioni tornano al valore predefinito, comandi compresi.',
+                es: 'Todos los ajustes vuelven a su valor predeterminado, controles incluidos.'
             },
             'settings.display.language': {
                 fr: 'Langue',
                 en: 'Language',
                 it: 'Lingua',
                 es: 'Idioma'
+            },
+            'settings.display.renderer': {
+                fr: 'Moteur de rendu',
+                en: 'Renderer',
+                it: 'Motore di rendering',
+                es: 'Motor de render'
             },
             'settings.controls.device': {
                 fr: 'Appareil',
@@ -244,10 +256,10 @@ class ShowcaseTranslations {
                 es: 'Código fuente del proyecto:'
             },
             'about.licence': {
-                fr: 'Licence MIT — à l\'exception du synthétiseur musical libADLMIDI, embarqué sous licence LGPL v3, et de la bibliothèque QR zxing-wasm, sous licences MIT, Apache-2.0 et BSD-3.',
-                en: 'MIT licence — except the libADLMIDI music synthesizer, embedded under the LGPL v3 licence, and the zxing-wasm QR library, under the MIT, Apache-2.0 and BSD-3 licences.',
-                it: 'Licenza MIT — a eccezione del sintetizzatore musicale libADLMIDI, incorporato con licenza LGPL v3, e della libreria QR zxing-wasm, con licenze MIT, Apache-2.0 e BSD-3.',
-                es: 'Licencia MIT — salvo el sintetizador musical libADLMIDI, integrado bajo licencia LGPL v3, y la biblioteca QR zxing-wasm, bajo licencias MIT, Apache-2.0 y BSD-3.'
+                fr: 'Licence MIT — à l\'exception du synthétiseur musical libADLMIDI, embarqué sous licence LGPL v3, de la bibliothèque QR zxing-wasm, sous licences MIT, Apache-2.0 et BSD-3, et de la police Oswald, sous licence SIL OFL 1.1.',
+                en: 'MIT licence — except the libADLMIDI music synthesizer, embedded under the LGPL v3 licence, the zxing-wasm QR library, under the MIT, Apache-2.0 and BSD-3 licences, and the Oswald font, under the SIL OFL 1.1 licence.',
+                it: 'Licenza MIT — a eccezione del sintetizzatore musicale libADLMIDI, incorporato con licenza LGPL v3, della libreria QR zxing-wasm, con licenze MIT, Apache-2.0 e BSD-3, e del carattere Oswald, con licenza SIL OFL 1.1.',
+                es: 'Licencia MIT — salvo el sintetizador musical libADLMIDI, integrado bajo licencia LGPL v3, la biblioteca QR zxing-wasm, bajo licencias MIT, Apache-2.0 y BSD-3, y la tipografía Oswald, bajo licencia SIL OFL 1.1.'
             },
             'about.motionCapture': {
                 fr: 'Capture de mouvement de l\'exemple Animation : CMU Graphics Lab Motion Capture Database (mocap.cs.cmu.edu), financée par la NSF (EIA-0196217).',
@@ -281,10 +293,10 @@ class ShowcaseTranslations {
                 es: 'Objetos'
             },
             'example.objects.infos': {
-                fr: 'Visionneuse : objet et moteur de rendu au choix',
-                en: 'Viewer: pick the object and the renderer',
-                it: 'Visualizzatore: oggetto e motore di rendering a scelta',
-                es: 'Visor: objeto y motor de render a elegir'
+                fr: 'Visionneuse : objet au choix',
+                en: 'Viewer: pick the object',
+                it: 'Visualizzatore: oggetto a scelta',
+                es: 'Visor: objeto a elegir'
             },
             'example.lights': {
                 fr: 'Lumières',
@@ -359,12 +371,6 @@ class ShowcaseTranslations {
                 es: 'El principal conduce la furgoneta, cada dispositivo emparejado la sigue en directo'
             },
             // --- Objects viewer ---
-            'objects.renderer': {
-                fr: 'Moteur de rendu',
-                en: 'Renderer',
-                it: 'Motore di rendering',
-                es: 'Motor de render'
-            },
             'object.cube': {
                 fr: 'Cube',
                 en: 'Cube',

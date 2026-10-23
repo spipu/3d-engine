@@ -77,10 +77,11 @@ class AbstractShowcaseExample {
     /**
      * The 16:9 letterboxed screen and its engine; the touch pad shows the given controls and always the menu button.
      *
-     * @param {{padControls?: string[], mouseLock?: boolean, renderer?: string, screenId?: string}} options -
+     * The renderer is the one of the options.
+     *
+     * @param {{padControls?: string[], mouseLock?: boolean, screenId?: string}} options -
      *        padControls among AbstractShowcaseExample.PAD_CONTROLS (none by default); mouseLock: the mouse looks
-     *        around (off by default); renderer: Object3dRendererList code, 'webgl' by default; screenId: the element
-     *        the screen goes in, the page's screen by default
+     *        around (off by default); screenId: the element the screen goes in, the page's screen by default
      */
     _createScene(options = {}) {
         const shown = (options.padControls ?? []);
@@ -94,7 +95,7 @@ class AbstractShowcaseExample {
         for (const control of AbstractShowcaseExample.PAD_CONTROLS) {
             this._inputs.setVirtualPadControlAllowed(control, (shown.includes(control) || (control === AbstractShowcaseExample.MENU_CONTROL)));
         }
-        this._engine = new Engine3d(this._screen, new Object3dRendererList().getRenderer(options.renderer ?? AbstractShowcaseExample.RENDERER));
+        this._engine = new Engine3d(this._screen, new Object3dRendererList().getRenderer(showcaseSettings.get(ShowcaseSettings.RENDERER_KEY)));
 
         return this._engine;
     }
@@ -135,7 +136,6 @@ class AbstractShowcaseExample {
 AbstractShowcaseExample.SCREEN_ID      = 'screen';
 AbstractShowcaseExample.VIRTUAL_WIDTH  = 1920;
 AbstractShowcaseExample.VIRTUAL_HEIGHT = 1080;
-AbstractShowcaseExample.RENDERER       = 'webgl';
 AbstractShowcaseExample.COPYRIGHT      = '(c)2026 Spipu';
 // Every target of the touch pad (Inputs.setVirtualPadControlAllowed); the pause one is the button back to the menu.
 AbstractShowcaseExample.PAD_CONTROLS   = Object.freeze(['jump', 'crouch', 'action', 'pause', 'weaponNext', 'map', 'fire', 'move', 'aim']);
