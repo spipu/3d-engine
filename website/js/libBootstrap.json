@@ -1,5 +1,5 @@
 {
-    "version": "v1.0052",
+    "version": "v1.0053",
     "files": {
         "assets": [
             "/lib/libadlmidi/libadlmidi.dosbox.slim.processor.js",
@@ -138,6 +138,7 @@
             "/lib/libadlmidi/libadlmidi.js",
             "/js/webapp/screenWakeLock.js",
             "/js/webapp/appViewportStabilizer.js",
+            "/js/webapp/appPlatform.js",
             "/js/webapp/appDatabaseSchema.js",
             "/js/webapp/appDatabaseUpgrade.js",
             "/js/webapp/appDatabase.js",
