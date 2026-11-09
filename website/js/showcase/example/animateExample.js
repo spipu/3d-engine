@@ -30,7 +30,7 @@ class AnimateExample extends AbstractShowcaseExample {
     }
 
     _init() {
-        const engine = this._createScene({padControls: ['move']});
+        const engine = this._createScene({padControls: ['move', 'run']});
 
         this._model     = loader.animatedModels().getByCode(AnimateExample.MODEL);
         this._character = new AnimatedInstance(this._model).bind();
@@ -44,6 +44,7 @@ class AnimateExample extends AbstractShowcaseExample {
         this._bindHud([
             'Up: walk, down: walk back, left / right: side step',
             'Up or down with left / right: walk and turn',
+            'Run: walk 2.5 times as fast',
             'Motion capture: CMU Graphics Lab, mocap.cs.cmu.edu'
         ]);
         document.addEventListener('keydown', this._onKeyDown);
@@ -108,7 +109,7 @@ class AnimateExample extends AbstractShowcaseExample {
      * Up / down choose walking forward or back, left / right a turn while walking, or a side step on their own.
      * Opposite keys cancel out; nothing left: idle. The arrows win over the movement stick, whose deflection sets
      * the clip's speed (so the travel) and the turn rate; walking, the speed is the whole deflection, whatever its
-     * direction.
+     * direction. Run makes the walk 2.5 times as fast.
      */
     _chosenMove() {
         const arrowForward = (Number(this._held.has('ArrowUp')) - Number(this._held.has('ArrowDown')));
@@ -117,7 +118,8 @@ class AnimateExample extends AbstractShowcaseExample {
         const forward      = (arrows ? arrowForward : AnimateExample._deflection(this._inputs.readJoy1Y()));
         const side         = (arrows ? arrowSide : -AnimateExample._deflection(this._inputs.readJoy1X()));
         if (forward !== 0) {
-            const speed = Math.min(Math.hypot(forward, side), 1);
+            const run   = (this._inputs.readButtonRun() ? AnimateExample.RUN_FACTOR : 1);
+            const speed = (Math.min(Math.hypot(forward, side), 1) * run);
             // Walking back, the turn is mirrored: left / right point where the character goes, as when reversing.
             return {clip: ((forward > 0) ? 'walk' : 'walkBack'), speed: speed, turn: (side * Math.sign(forward))};
         }
@@ -183,6 +185,7 @@ AnimateExample.KEYS            = Object.freeze(['ArrowUp', 'ArrowDown', 'ArrowLe
 AnimateExample.STICK_DEAD_ZONE = 0.15;
 AnimateExample.FADE_SECONDS    = 0.25;
 AnimateExample.TURN_DEGREES    = 90;
+AnimateExample.RUN_FACTOR      = 2.5;
 AnimateExample.MS_PER_SECOND   = 1000;
 // The camera behind the character: distance, height, pitch, and how fast it catches up (per second).
 AnimateExample.CAMERA_BACK     = 3.2;

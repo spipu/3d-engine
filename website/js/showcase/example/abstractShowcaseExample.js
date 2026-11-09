@@ -138,5 +138,5 @@ AbstractShowcaseExample.VIRTUAL_WIDTH  = 1920;
 AbstractShowcaseExample.VIRTUAL_HEIGHT = 1080;
 AbstractShowcaseExample.COPYRIGHT      = '(c)2026 Spipu';
 // Every target of the touch pad (Inputs.setVirtualPadControlAllowed); the pause one is the button back to the menu.
-AbstractShowcaseExample.PAD_CONTROLS   = Object.freeze(['jump', 'crouch', 'action', 'pause', 'weaponNext', 'map', 'fire', 'move', 'aim']);
+AbstractShowcaseExample.PAD_CONTROLS   = Object.freeze(['jump', 'crouch', 'action', 'pause', 'weaponNext', 'map', 'run', 'fire', 'move', 'aim']);
 AbstractShowcaseExample.MENU_CONTROL   = 'pause';
