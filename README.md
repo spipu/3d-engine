@@ -59,7 +59,7 @@ Whatever the mode, instances are frustum-culled in camera space before any per-v
 | Lights | Coloured light sources — move them around |
 | Van | Drive the van |
 | Labyrinth | First-person navigation inside a 3D labyrinth, FPS physics |
-| Animation | A skeletal character read from glTF walking on an endless ground, the camera behind it: up walks, down walks back, left / right side-step, and turn while walking (arrow keys or movement stick); motion capture from the [CMU Graphics Lab Motion Capture Database](http://mocap.cs.cmu.edu) (funded by NSF EIA-0196217) |
+| Animation | A skeletal character read from glTF walking on an endless ground, the camera behind it: up walks, down walks back, left / right side-step, turn while walking, the walking pace following the stick, and run forward with the run control, the run cycle taking over past twice the walking pace (arrow keys or movement stick); motion capture from the [CMU Graphics Lab Motion Capture Database](http://mocap.cs.cmu.edu) (funded by NSF EIA-0196217) |
 | Network bench | Devices pair by QR code (or two tabs in loopback), link over WebRTC, measure their ping and exchange chunked bursts |
 | Network game | The main drives the van through the synchronous turn cycle (a state to every sub, a command back from each, then the next turn), every paired sub watches it live with its ping and the turn rate |
 

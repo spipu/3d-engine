@@ -79,9 +79,10 @@ class AbstractShowcaseExample {
      *
      * The renderer is the one of the options.
      *
-     * @param {{padControls?: string[], mouseLock?: boolean, screenId?: string}} options -
-     *        padControls among AbstractShowcaseExample.PAD_CONTROLS (none by default); mouseLock: the mouse looks
-     *        around (off by default); screenId: the element the screen goes in, the page's screen by default
+     * @param {{padControls?: string[], padPlaces?: object, mouseLock?: boolean, screenId?: string}} options -
+     *        padControls among AbstractShowcaseExample.PAD_CONTROLS (none by default); padPlaces: control -> {x, y},
+     *        over AbstractShowcaseExample.PAD_PLACES; mouseLock: the mouse looks around (off by default); screenId:
+     *        the element the screen goes in, the page's screen by default
      */
     _createScene(options = {}) {
         const shown = (options.padControls ?? []);
@@ -94,6 +95,12 @@ class AbstractShowcaseExample {
         this._inputs.bindScreen(this._screen).setMouseLockAllowed(options.mouseLock === true);
         for (const control of AbstractShowcaseExample.PAD_CONTROLS) {
             this._inputs.setVirtualPadControlAllowed(control, (shown.includes(control) || (control === AbstractShowcaseExample.MENU_CONTROL)));
+        }
+        // The pad is shared by every example: each button back to its place, then the example's own.
+        const places = Object.assign({}, AbstractShowcaseExample.PAD_PLACES, (options.padPlaces ?? {}));
+        for (const control of Object.keys(InputVirtualGamepad.BUTTONS)) {
+            const place = (places[control] ?? InputVirtualGamepad.BUTTONS[control]);
+            this._inputs.setVirtualPadButtonPosition(control, place.x, place.y);
         }
         this._engine = new Engine3d(this._screen, new Object3dRendererList().getRenderer(showcaseSettings.get(ShowcaseSettings.RENDERER_KEY)));
 
@@ -140,3 +147,10 @@ AbstractShowcaseExample.COPYRIGHT      = '(c)2026 Spipu';
 // Every target of the touch pad (Inputs.setVirtualPadControlAllowed); the pause one is the button back to the menu.
 AbstractShowcaseExample.PAD_CONTROLS   = Object.freeze(['jump', 'crouch', 'action', 'pause', 'weaponNext', 'map', 'run', 'fire', 'move', 'aim']);
 AbstractShowcaseExample.MENU_CONTROL   = 'pause';
+// The showcase's own places of the pad buttons (top left corner, fractions of the screen): the menu in the top left
+// corner, as far from the edge as the right column; the others where the engine puts them.
+AbstractShowcaseExample.PAD_PLACES     = Object.freeze({
+    pause: Object.freeze({x: InputVirtualGamepad.COLUMN_EDGE_MARGIN, y: InputVirtualGamepad.BUTTONS.pause.y})
+});
+// The top right corner of the pad, as far from the edges as the right column (for a button of the usual size).
+AbstractShowcaseExample.PAD_TOP_RIGHT  = Object.freeze({x: InputVirtualGamepad.BUTTONS.jump.x, y: InputVirtualGamepad.BUTTONS.pause.y});

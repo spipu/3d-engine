@@ -382,6 +382,20 @@ class AnimationBench {
         player.play(clip, {speed: 2});
         names(0.25);
         this._near('speed', player.getTime(), 0.5, FLOAT_EPSILON);
+        player.setSpeed(0.5);
+        names(0.5);
+        this._near('speed changed while playing', player.getTime(), 0.75, FLOAT_EPSILON);
+        for (const [what, refuse] of [['play', () => player.play(clip, {speed: -1})], ['cross-fade', () => player.crossFadeTo(clip, 0.1, {speed: -1})], ['speed change', () => player.setSpeed(-1)]]) {
+            let refused = false;
+            try {
+                refuse();
+            } catch (error) {
+                refused = error.message.includes('must not be negative');
+            }
+            this._equal('negative speed refused: ' + what, refused, true);
+        }
+        this._near('a refused speed leaves the clip playing', player.getTime(), 0.75, FLOAT_EPSILON);
+        this._equal('a refused cross-fade starts no fade', player.isFading(), false);
     }
 
     // Against the clip playing on with no switch (1 ms samples of a float32 pose): switching at once jumps far

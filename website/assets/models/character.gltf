@@ -2,7 +2,7 @@
  "asset": {
   "version": "2.0",
   "generator": "Spipu3D demo character (art mannequin)",
-  "copyright": "Motion: CMU Graphics Lab Motion Capture Database, mocap.cs.cmu.edu (subject 69), retargeted"
+  "copyright": "Motion: CMU Graphics Lab Motion Capture Database, mocap.cs.cmu.edu (subjects 69, 16), retargeted"
  },
  "scene": 0,
  "scenes": [
@@ -1188,11 +1188,205 @@
      }
     ]
    }
+  },
+  {
+   "name": "run",
+   "channels": [
+    {
+     "sampler": 0,
+     "target": {
+      "node": 2,
+      "path": "rotation"
+     }
+    },
+    {
+     "sampler": 1,
+     "target": {
+      "node": 3,
+      "path": "rotation"
+     }
+    },
+    {
+     "sampler": 2,
+     "target": {
+      "node": 4,
+      "path": "rotation"
+     }
+    },
+    {
+     "sampler": 3,
+     "target": {
+      "node": 5,
+      "path": "rotation"
+     }
+    },
+    {
+     "sampler": 4,
+     "target": {
+      "node": 6,
+      "path": "rotation"
+     }
+    },
+    {
+     "sampler": 5,
+     "target": {
+      "node": 7,
+      "path": "rotation"
+     }
+    },
+    {
+     "sampler": 6,
+     "target": {
+      "node": 8,
+      "path": "rotation"
+     }
+    },
+    {
+     "sampler": 7,
+     "target": {
+      "node": 9,
+      "path": "rotation"
+     }
+    },
+    {
+     "sampler": 8,
+     "target": {
+      "node": 10,
+      "path": "rotation"
+     }
+    },
+    {
+     "sampler": 9,
+     "target": {
+      "node": 11,
+      "path": "rotation"
+     }
+    },
+    {
+     "sampler": 10,
+     "target": {
+      "node": 12,
+      "path": "rotation"
+     }
+    },
+    {
+     "sampler": 11,
+     "target": {
+      "node": 13,
+      "path": "rotation"
+     }
+    },
+    {
+     "sampler": 12,
+     "target": {
+      "node": 14,
+      "path": "rotation"
+     }
+    },
+    {
+     "sampler": 13,
+     "target": {
+      "node": 2,
+      "path": "translation"
+     }
+    }
+   ],
+   "samplers": [
+    {
+     "input": 84,
+     "output": 85,
+     "interpolation": "CUBICSPLINE"
+    },
+    {
+     "input": 84,
+     "output": 86,
+     "interpolation": "CUBICSPLINE"
+    },
+    {
+     "input": 84,
+     "output": 87,
+     "interpolation": "CUBICSPLINE"
+    },
+    {
+     "input": 84,
+     "output": 88,
+     "interpolation": "CUBICSPLINE"
+    },
+    {
+     "input": 84,
+     "output": 89,
+     "interpolation": "CUBICSPLINE"
+    },
+    {
+     "input": 84,
+     "output": 90,
+     "interpolation": "CUBICSPLINE"
+    },
+    {
+     "input": 84,
+     "output": 91,
+     "interpolation": "CUBICSPLINE"
+    },
+    {
+     "input": 84,
+     "output": 92,
+     "interpolation": "CUBICSPLINE"
+    },
+    {
+     "input": 84,
+     "output": 93,
+     "interpolation": "CUBICSPLINE"
+    },
+    {
+     "input": 84,
+     "output": 94,
+     "interpolation": "CUBICSPLINE"
+    },
+    {
+     "input": 84,
+     "output": 95,
+     "interpolation": "CUBICSPLINE"
+    },
+    {
+     "input": 84,
+     "output": 96,
+     "interpolation": "CUBICSPLINE"
+    },
+    {
+     "input": 84,
+     "output": 97,
+     "interpolation": "CUBICSPLINE"
+    },
+    {
+     "input": 84,
+     "output": 98,
+     "interpolation": "CUBICSPLINE"
+    }
+   ],
+   "extras": {
+    "source": "CMU 16_55, frames 56-124",
+    "events": [
+     {
+      "time": 0.19999999999999998,
+      "name": "footstep",
+      "data": {
+       "foot": "right"
+      }
+     },
+     {
+      "time": 0.4333333333333333,
+      "name": "footstep",
+      "data": {
+       "foot": "left"
+      }
+     }
+    ]
+   }
   }
  ],
  "buffers": [
   {
-   "byteLength": 157680,
+   "byteLength": 169632,
    "uri": "character.bin"
   }
  ],
@@ -1616,6 +1810,81 @@
    "buffer": 0,
    "byteOffset": 156528,
    "byteLength": 1152
+  },
+  {
+   "buffer": 0,
+   "byteOffset": 157680,
+   "byteLength": 72
+  },
+  {
+   "buffer": 0,
+   "byteOffset": 157752,
+   "byteLength": 864
+  },
+  {
+   "buffer": 0,
+   "byteOffset": 158616,
+   "byteLength": 864
+  },
+  {
+   "buffer": 0,
+   "byteOffset": 159480,
+   "byteLength": 864
+  },
+  {
+   "buffer": 0,
+   "byteOffset": 160344,
+   "byteLength": 864
+  },
+  {
+   "buffer": 0,
+   "byteOffset": 161208,
+   "byteLength": 864
+  },
+  {
+   "buffer": 0,
+   "byteOffset": 162072,
+   "byteLength": 864
+  },
+  {
+   "buffer": 0,
+   "byteOffset": 162936,
+   "byteLength": 864
+  },
+  {
+   "buffer": 0,
+   "byteOffset": 163800,
+   "byteLength": 864
+  },
+  {
+   "buffer": 0,
+   "byteOffset": 164664,
+   "byteLength": 864
+  },
+  {
+   "buffer": 0,
+   "byteOffset": 165528,
+   "byteLength": 864
+  },
+  {
+   "buffer": 0,
+   "byteOffset": 166392,
+   "byteLength": 864
+  },
+  {
+   "buffer": 0,
+   "byteOffset": 167256,
+   "byteLength": 864
+  },
+  {
+   "buffer": 0,
+   "byteOffset": 168120,
+   "byteLength": 864
+  },
+  {
+   "buffer": 0,
+   "byteOffset": 168984,
+   "byteLength": 648
   }
  ],
  "accessors": [
@@ -2172,6 +2441,102 @@
    "componentType": 5126,
    "type": "VEC3",
    "count": 96
+  },
+  {
+   "bufferView": 84,
+   "componentType": 5126,
+   "type": "SCALAR",
+   "count": 18,
+   "min": [
+    0
+   ],
+   "max": [
+    0.5666666666666667
+   ]
+  },
+  {
+   "bufferView": 85,
+   "componentType": 5126,
+   "type": "VEC4",
+   "count": 54
+  },
+  {
+   "bufferView": 86,
+   "componentType": 5126,
+   "type": "VEC4",
+   "count": 54
+  },
+  {
+   "bufferView": 87,
+   "componentType": 5126,
+   "type": "VEC4",
+   "count": 54
+  },
+  {
+   "bufferView": 88,
+   "componentType": 5126,
+   "type": "VEC4",
+   "count": 54
+  },
+  {
+   "bufferView": 89,
+   "componentType": 5126,
+   "type": "VEC4",
+   "count": 54
+  },
+  {
+   "bufferView": 90,
+   "componentType": 5126,
+   "type": "VEC4",
+   "count": 54
+  },
+  {
+   "bufferView": 91,
+   "componentType": 5126,
+   "type": "VEC4",
+   "count": 54
+  },
+  {
+   "bufferView": 92,
+   "componentType": 5126,
+   "type": "VEC4",
+   "count": 54
+  },
+  {
+   "bufferView": 93,
+   "componentType": 5126,
+   "type": "VEC4",
+   "count": 54
+  },
+  {
+   "bufferView": 94,
+   "componentType": 5126,
+   "type": "VEC4",
+   "count": 54
+  },
+  {
+   "bufferView": 95,
+   "componentType": 5126,
+   "type": "VEC4",
+   "count": 54
+  },
+  {
+   "bufferView": 96,
+   "componentType": 5126,
+   "type": "VEC4",
+   "count": 54
+  },
+  {
+   "bufferView": 97,
+   "componentType": 5126,
+   "type": "VEC4",
+   "count": 54
+  },
+  {
+   "bufferView": 98,
+   "componentType": 5126,
+   "type": "VEC3",
+   "count": 54
   }
  ]
 }

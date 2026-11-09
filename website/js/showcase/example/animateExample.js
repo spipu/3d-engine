@@ -1,12 +1,12 @@
 /*
- * Motion capture: CMU Graphics Lab Motion Capture Database, http://mocap.cs.cmu.edu (subject 69), funded by the NSF
- * grant EIA-0196217.
+ * Motion capture: CMU Graphics Lab Motion Capture Database, http://mocap.cs.cmu.edu (subjects 69 and 16), funded by
+ * the NSF grant EIA-0196217.
  */
 
 /**
  * A character walking on an endless ground, the camera behind it. The arrow keys (or the movement stick) choose the
  * clip, the stick's deflection its pace; the clips move the character themselves (root motion), so its feet do not
- * slide. Up or down with left or right: it walks and turns.
+ * slide. Up or down with left or right: it walks and turns; faster than walking, it runs.
  */
 class AnimateExample extends AbstractShowcaseExample {
     constructor() {
@@ -15,6 +15,8 @@ class AnimateExample extends AbstractShowcaseExample {
         this._model     = null;
         this._character = null;
         this._clipName  = null;
+        this._walkSpeed = 0;
+        this._runSpeed  = 0;
         this._heading   = 0;
         this._camera    = {x: 0, z: -AnimateExample.CAMERA_BACK, heading: 0};
         this._lights    = [];
@@ -30,11 +32,14 @@ class AnimateExample extends AbstractShowcaseExample {
     }
 
     _init() {
-        const engine = this._createScene({padControls: ['move', 'run']});
+        const engine = this._createScene({padControls: ['move', 'run'], padPlaces: {run: AbstractShowcaseExample.PAD_TOP_RIGHT}});
 
         this._model     = loader.animatedModels().getByCode(AnimateExample.MODEL);
         this._character = new AnimatedInstance(this._model).bind();
-        this._character.getPlayer().setRootMotion(this._model.getSkeleton().indexOf(AnimateExample.ROOT_JOINT));
+        const rootJoint = this._model.getSkeleton().indexOf(AnimateExample.ROOT_JOINT);
+        this._character.getPlayer().setRootMotion(rootJoint);
+        this._walkSpeed = AnimateExample._travelSpeed(this._model.getClip('walk'), rootJoint);
+        this._runSpeed  = AnimateExample._travelSpeed(this._model.getClip('run'), rootJoint);
         this._lights    = AnimateExample.LIGHTS.map((light) => new Light(light.color, light.radius, [...light.offset]));
         engine.setBackground(35, 35, 45);
         engine.setFov(45.0);
@@ -44,7 +49,7 @@ class AnimateExample extends AbstractShowcaseExample {
         this._bindHud([
             'Up: walk, down: walk back, left / right: side step',
             'Up or down with left / right: walk and turn',
-            'Run: walk 2.5 times as fast',
+            'Run: forward 4 times as fast, running past twice the walking pace',
             'Motion capture: CMU Graphics Lab, mocap.cs.cmu.edu'
         ]);
         document.addEventListener('keydown', this._onKeyDown);
@@ -55,7 +60,7 @@ class AnimateExample extends AbstractShowcaseExample {
         const engine = this._engine;
 
         engine.calculateDeltaTime(timestamp);
-        const dt   = (engine.getDeltaTime() / AnimateExample.MS_PER_SECOND);
+        const dt     = (engine.getDeltaTime() / AnimateExample.MS_PER_SECOND);
         const move   = this._chosenMove();
         const player = this._character.getPlayer();
         if (move.clip !== this._clipName) {
@@ -109,7 +114,8 @@ class AnimateExample extends AbstractShowcaseExample {
      * Up / down choose walking forward or back, left / right a turn while walking, or a side step on their own.
      * Opposite keys cancel out; nothing left: idle. The arrows win over the movement stick, whose deflection sets
      * the clip's speed (so the travel) and the turn rate; walking, the speed is the whole deflection, whatever its
-     * direction. Run makes the walk 2.5 times as fast.
+     * direction. Run makes the walk forward 4 times as fast; past twice the walking pace, the run clip takes over,
+     * played so as to travel as fast.
      */
     _chosenMove() {
         const arrowForward = (Number(this._held.has('ArrowUp')) - Number(this._held.has('ArrowDown')));
@@ -118,8 +124,11 @@ class AnimateExample extends AbstractShowcaseExample {
         const forward      = (arrows ? arrowForward : AnimateExample._deflection(this._inputs.readJoy1Y()));
         const side         = (arrows ? arrowSide : -AnimateExample._deflection(this._inputs.readJoy1X()));
         if (forward !== 0) {
-            const run   = (this._inputs.readButtonRun() ? AnimateExample.RUN_FACTOR : 1);
+            const run   = (((forward > 0) && this._inputs.readButtonRun()) ? AnimateExample.RUN_FACTOR : 1);
             const speed = (Math.min(Math.hypot(forward, side), 1) * run);
+            if (speed > AnimateExample.RUN_CLIP_SPEED) {
+                return {clip: 'run', speed: ((speed * this._walkSpeed) / this._runSpeed), turn: side};
+            }
             // Walking back, the turn is mirrored: left / right point where the character goes, as when reversing.
             return {clip: ((forward > 0) ? 'walk' : 'walkBack'), speed: speed, turn: (side * Math.sign(forward))};
         }
@@ -140,6 +149,18 @@ class AnimateExample extends AbstractShowcaseExample {
         const radians = (camera.heading * DEG_TO_RAD);
         camera.x += (((position[0] - (Math.sin(radians) * AnimateExample.CAMERA_BACK)) - camera.x) * share);
         camera.z += (((position[2] - (Math.cos(radians) * AnimateExample.CAMERA_BACK)) - camera.z) * share);
+    }
+
+    // Metres per second of a clip played at speed 1: the travel of its root joint over one turn.
+    static _travelSpeed(clip, joint) {
+        const channel = clip.getChannels().find((c) => ((c.getJoint() === joint) && (c.getPath() === AnimationChannel.TRANSLATION)));
+        const cursor  = AnimationSampler.createCursor();
+        const start   = new Float32Array(Skeleton.TRANSLATION_SIZE);
+        const end     = new Float32Array(Skeleton.TRANSLATION_SIZE);
+        channel.getSampler().sample(0, cursor, start, 0);
+        channel.getSampler().sample(clip.getDuration(), cursor, end, 0);
+
+        return (Math.hypot((end[0] - start[0]), (end[AnimationPlayer.Z_COMPONENT] - start[AnimationPlayer.Z_COMPONENT])) / clip.getDuration());
     }
 
     // A stick axis, 0 within the dead zone.
@@ -185,7 +206,9 @@ AnimateExample.KEYS            = Object.freeze(['ArrowUp', 'ArrowDown', 'ArrowLe
 AnimateExample.STICK_DEAD_ZONE = 0.15;
 AnimateExample.FADE_SECONDS    = 0.25;
 AnimateExample.TURN_DEGREES    = 90;
-AnimateExample.RUN_FACTOR      = 2.5;
+AnimateExample.RUN_FACTOR      = 4;
+// Walking speed past which the run clip takes over.
+AnimateExample.RUN_CLIP_SPEED  = 2;
 AnimateExample.MS_PER_SECOND   = 1000;
 // The camera behind the character: distance, height, pitch, and how fast it catches up (per second).
 AnimateExample.CAMERA_BACK     = 3.2;
