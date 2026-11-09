@@ -5,8 +5,8 @@
 
 /**
  * A character walking on an endless ground, the camera behind it. The arrow keys (or the movement stick) choose the
- * clip; the clips move the character themselves (root motion), so its feet do not slide. Up or down with left or
- * right: it walks and turns.
+ * clip, the stick's deflection its pace; the clips move the character themselves (root motion), so its feet do not
+ * slide. Up or down with left or right: it walks and turns.
  */
 class AnimateExample extends AbstractShowcaseExample {
     constructor() {
@@ -55,11 +55,13 @@ class AnimateExample extends AbstractShowcaseExample {
 
         engine.calculateDeltaTime(timestamp);
         const dt   = (engine.getDeltaTime() / AnimateExample.MS_PER_SECOND);
-        const move = this._chosenMove();
+        const move   = this._chosenMove();
+        const player = this._character.getPlayer();
         if (move.clip !== this._clipName) {
             this._clipName = move.clip;
-            this._character.getPlayer().crossFadeTo(this._model.getClip(this._clipName), AnimateExample.FADE_SECONDS, {loop: true});
+            player.crossFadeTo(this._model.getClip(this._clipName), AnimateExample.FADE_SECONDS, {loop: true, speed: move.speed});
         }
+        player.setSpeed(move.speed);
         // The heading set before the update: the root motion of this frame is turned by it.
         this._heading -= (move.turn * AnimateExample.TURN_DEGREES * dt);
         this._character.place(this._character.getInstance().getPosition(), [0, this._heading, 0]);
@@ -104,22 +106,26 @@ class AnimateExample extends AbstractShowcaseExample {
 
     /**
      * Up / down choose walking forward or back, left / right a turn while walking, or a side step on their own.
-     * Opposite keys cancel out; nothing left: idle. The arrows win over the movement stick.
+     * Opposite keys cancel out; nothing left: idle. The arrows win over the movement stick, whose deflection sets
+     * the clip's speed (so the travel) and the turn rate; walking, the speed is the whole deflection, whatever its
+     * direction.
      */
     _chosenMove() {
         const arrowForward = (Number(this._held.has('ArrowUp')) - Number(this._held.has('ArrowDown')));
         const arrowSide    = (Number(this._held.has('ArrowLeft')) - Number(this._held.has('ArrowRight')));
         const arrows       = ((arrowForward !== 0) || (arrowSide !== 0));
-        const forward      = (arrows ? arrowForward : AnimateExample._direction(this._inputs.readJoy1Y()));
-        const side         = (arrows ? arrowSide : -AnimateExample._direction(this._inputs.readJoy1X()));
+        const forward      = (arrows ? arrowForward : AnimateExample._deflection(this._inputs.readJoy1Y()));
+        const side         = (arrows ? arrowSide : -AnimateExample._deflection(this._inputs.readJoy1X()));
         if (forward !== 0) {
-            return {clip: ((forward > 0) ? 'walk' : 'walkBack'), turn: side};
+            const speed = Math.min(Math.hypot(forward, side), 1);
+            // Walking back, the turn is mirrored: left / right point where the character goes, as when reversing.
+            return {clip: ((forward > 0) ? 'walk' : 'walkBack'), speed: speed, turn: (side * Math.sign(forward))};
         }
         if (side !== 0) {
-            return {clip: ((side > 0) ? 'strafeLeft' : 'strafeRight'), turn: 0};
+            return {clip: ((side > 0) ? 'strafeLeft' : 'strafeRight'), speed: Math.abs(side), turn: 0};
         }
 
-        return {clip: 'idle', turn: 0};
+        return {clip: 'idle', speed: 1, turn: 0};
     }
 
     // The camera turns and moves towards its place behind the character, a share of the gap a frame.
@@ -134,9 +140,9 @@ class AnimateExample extends AbstractShowcaseExample {
         camera.z += (((position[2] - (Math.cos(radians) * AnimateExample.CAMERA_BACK)) - camera.z) * share);
     }
 
-    // A stick deflection as a key: -1, 0 or 1.
-    static _direction(axis) {
-        return ((Math.abs(axis) < AnimateExample.STICK_THRESHOLD) ? 0 : Math.sign(axis));
+    // A stick axis, 0 within the dead zone.
+    static _deflection(axis) {
+        return ((Math.abs(axis) < AnimateExample.STICK_DEAD_ZONE) ? 0 : axis);
     }
 
     // The ground moved by whole tiles: its texture stays put under the character.
@@ -174,7 +180,7 @@ class AnimateExample extends AbstractShowcaseExample {
 AnimateExample.MODEL           = 'character';
 AnimateExample.ROOT_JOINT      = 'pelvis';
 AnimateExample.KEYS            = Object.freeze(['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight']);
-AnimateExample.STICK_THRESHOLD = 0.5;
+AnimateExample.STICK_DEAD_ZONE = 0.15;
 AnimateExample.FADE_SECONDS    = 0.25;
 AnimateExample.TURN_DEGREES    = 90;
 AnimateExample.MS_PER_SECOND   = 1000;
