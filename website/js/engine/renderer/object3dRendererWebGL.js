@@ -19,8 +19,8 @@ class Object3dRendererWebGL extends Object3dRendererBase {
         // divides by it.
         this._neutralDepthShading = {visibility: 0.0, visibilityMax: 0.0, shadeBase: 0.0, shadeScale: 0.0, rampCount: 32.0, strength: 0.0};
         // Engine3d.setBloom: resources made on the first bloom frame, freed on the first frame without it.
-        this._bloom      = new Object3dRendererWebGLBloom();
-        this._bloomState = new Float32Array(Object3dRendererWebGLBloom.STATE_SIZE);
+        this._bloom      = new WebGLBloom();
+        this._bloomState = new Float32Array(WebGLBloom.STATE_SIZE);
     }
 
     get code() {
@@ -315,7 +315,7 @@ class Object3dRendererWebGL extends Object3dRendererBase {
 
         const lightOverride = ((((engine.lightOverride ?? 0) > 0)) ? engine.lightOverride : null);
         const bloomOn       = (engine.bloom !== null);
-        const coreWhite     = ((bloomOn) ? (engine.bloom.coreWhite ?? Object3dRendererWebGLBloom.DEFAULTS.coreWhite) : 0);
+        const coreWhite     = ((bloomOn) ? (engine.bloom.coreWhite ?? WebGLBloom.DEFAULTS.coreWhite) : 0);
         const shading       = (Object3dRendererBase.frameShading(engine) ?? this._neutralDepthShading);
         gl.uniform1f(loc.dsVis,      shading.visibility);
         gl.uniform1f(loc.dsVisMax,   shading.visibilityMax);
@@ -416,25 +416,25 @@ class Object3dRendererWebGL extends Object3dRendererBase {
     // Every value the scene program read for this glowing group, kept with its vertices for the glow pass.
     _recordGlow(engine, shading, group, vertices, floatCount, lightFloor, lightBoost, glTexture) {
         const state = this._bloomState;
-        state[Object3dRendererWebGLBloom.STATE_SX]          = engine.projScaleX;
-        state[Object3dRendererWebGLBloom.STATE_SY]          = engine.projScaleY;
-        state[Object3dRendererWebGLBloom.STATE_OX]          = engine.projOffsetX;
-        state[Object3dRendererWebGLBloom.STATE_OY]          = engine.projOffsetY;
-        state[Object3dRendererWebGLBloom.STATE_W]           = engine.scrWidth;
-        state[Object3dRendererWebGLBloom.STATE_H]           = engine.scrHeight;
-        state[Object3dRendererWebGLBloom.STATE_NEAR]        = engine.zBuffer.getNear();
-        state[Object3dRendererWebGLBloom.STATE_FAR]         = engine.zBuffer.getFar();
-        state[Object3dRendererWebGLBloom.STATE_DEPTH_BIAS]  = engine.instanceDepthBias;
-        state[Object3dRendererWebGLBloom.STATE_DS_VIS]      = shading.visibility;
-        state[Object3dRendererWebGLBloom.STATE_DS_VIS_MAX]  = shading.visibilityMax;
-        state[Object3dRendererWebGLBloom.STATE_DS_BASE]     = shading.shadeBase;
-        state[Object3dRendererWebGLBloom.STATE_DS_SCALE]    = shading.shadeScale;
-        state[Object3dRendererWebGLBloom.STATE_DS_RAMP]     = shading.rampCount;
-        state[Object3dRendererWebGLBloom.STATE_DS_STRENGTH] = shading.strength;
-        state[Object3dRendererWebGLBloom.STATE_ALPHA]       = group.alpha;
-        state[Object3dRendererWebGLBloom.STATE_CLAMP_V]     = ((group.clampV) ? 1 : 0);
-        state[Object3dRendererWebGLBloom.STATE_LIGHT_FLOOR] = lightFloor;
-        state[Object3dRendererWebGLBloom.STATE_LIGHT_BOOST] = lightBoost;
+        state[WebGLBloom.STATE_SX]          = engine.projScaleX;
+        state[WebGLBloom.STATE_SY]          = engine.projScaleY;
+        state[WebGLBloom.STATE_OX]          = engine.projOffsetX;
+        state[WebGLBloom.STATE_OY]          = engine.projOffsetY;
+        state[WebGLBloom.STATE_W]           = engine.scrWidth;
+        state[WebGLBloom.STATE_H]           = engine.scrHeight;
+        state[WebGLBloom.STATE_NEAR]        = engine.zBuffer.getNear();
+        state[WebGLBloom.STATE_FAR]         = engine.zBuffer.getFar();
+        state[WebGLBloom.STATE_DEPTH_BIAS]  = engine.instanceDepthBias;
+        state[WebGLBloom.STATE_DS_VIS]      = shading.visibility;
+        state[WebGLBloom.STATE_DS_VIS_MAX]  = shading.visibilityMax;
+        state[WebGLBloom.STATE_DS_BASE]     = shading.shadeBase;
+        state[WebGLBloom.STATE_DS_SCALE]    = shading.shadeScale;
+        state[WebGLBloom.STATE_DS_RAMP]     = shading.rampCount;
+        state[WebGLBloom.STATE_DS_STRENGTH] = shading.strength;
+        state[WebGLBloom.STATE_ALPHA]       = group.alpha;
+        state[WebGLBloom.STATE_CLAMP_V]     = ((group.clampV) ? 1 : 0);
+        state[WebGLBloom.STATE_LIGHT_FLOOR] = lightFloor;
+        state[WebGLBloom.STATE_LIGHT_BOOST] = lightBoost;
         this._bloom.record(vertices, floatCount, state, glTexture, group.blendAdd);
     }
 

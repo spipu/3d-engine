@@ -15,7 +15,7 @@ const SOURCES     = [
     'js/engine/entity/face.js',
     'js/engine/renderer/faceDepthQueue.js',
     'js/engine/renderer/object3dRendererBase.js',
-    'js/engine/renderer/object3dRendererWebGLBloom.js',
+    'js/engine/renderer/webgl/webGLBloom.js',
     'js/engine/renderer/object3dRendererWebGL.js',
 ];
 const LEVELS    = 4;

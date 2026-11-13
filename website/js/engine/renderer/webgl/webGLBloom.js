@@ -7,7 +7,7 @@
  * The glowing vertices are recorded by the renderer in batches keeping every value the scene program reads for them,
  * so the glow pass draws them exactly where the scene pass did.
  */
-class Object3dRendererWebGLBloom {
+class WebGLBloom {
     constructor() {
         this._width        = 0;
         this._height       = 0;
@@ -28,7 +28,7 @@ class Object3dRendererWebGLBloom {
         this._glowFloats   = 0;
         this._batches      = [];
         this._batchCount   = 0;
-        this._weights      = new Float32Array(Object3dRendererWebGLBloom.MAX_LEVELS);
+        this._weights      = new Float32Array(WebGLBloom.MAX_LEVELS);
     }
 
     /**
@@ -45,10 +45,10 @@ class Object3dRendererWebGLBloom {
      * @param {Engine3d}              engine
      */
     begin(gl, engine) {
-        const levelCount = Object3dRendererWebGLBloom._param(engine.bloom, 'levels');
+        const levelCount = WebGLBloom._param(engine.bloom, 'levels');
         if ((this._width !== engine.scrWidth) || (this._height !== engine.scrHeight) || (this._levelCount !== levelCount) || !this.hasResources()) {
             this.release(gl);
-            this._create(gl, engine.scrWidth, engine.scrHeight, levelCount, Object3dRendererWebGLBloom._param(engine.bloom, 'resolution'));
+            this._create(gl, engine.scrWidth, engine.scrHeight, levelCount, WebGLBloom._param(engine.bloom, 'resolution'));
         }
         this._glowFloats = 0;
         this._batchCount = 0;
@@ -64,13 +64,13 @@ class Object3dRendererWebGLBloom {
      *
      * @param {Float32Array} vertices   - 9 floats a vertex, as uploaded
      * @param {number}       floatCount
-     * @param {Float32Array} state      - Object3dRendererWebGLBloom.STATE_SIZE uniform values (see STATE_*)
+     * @param {Float32Array} state      - WebGLBloom.STATE_SIZE uniform values (see STATE_*)
      * @param {WebGLTexture|null} texture
      * @param {boolean}      blendAdd
      */
     record(vertices, floatCount, state, texture, blendAdd) {
         if ((this._glowFloats + floatCount) > this._glowData.length) {
-            let size = Math.max(this._glowData.length, Object3dRendererWebGLBloom.MIN_GLOW_FLOATS);
+            let size = Math.max(this._glowData.length, WebGLBloom.MIN_GLOW_FLOATS);
             while (size < (this._glowFloats + floatCount)) {
                 size *= 2;
             }
@@ -80,13 +80,13 @@ class Object3dRendererWebGLBloom {
         }
         this._glowData.set(vertices.subarray(0, floatCount), this._glowFloats);
         const last = ((this._batchCount > 0) ? this._batches[this._batchCount - 1] : null);
-        if ((last !== null) && (last.texture === texture) && (last.blendAdd === blendAdd) && Object3dRendererWebGLBloom._sameState(last.state, state)) {
+        if ((last !== null) && (last.texture === texture) && (last.blendAdd === blendAdd) && WebGLBloom._sameState(last.state, state)) {
             last.count      += floatCount;
             this._glowFloats += floatCount;
             return;
         }
         if (this._batchCount === this._batches.length) {
-            this._batches.push({state: new Float32Array(Object3dRendererWebGLBloom.STATE_SIZE), texture: null, blendAdd: false, start: 0, count: 0});
+            this._batches.push({state: new Float32Array(WebGLBloom.STATE_SIZE), texture: null, blendAdd: false, start: 0, count: 0});
         }
         const batch = this._batches[this._batchCount++];
         batch.state.set(state);
@@ -119,7 +119,7 @@ class Object3dRendererWebGLBloom {
         gl.bindBuffer(gl.ARRAY_BUFFER, renderer._vbo);
         for (let b = 0; b < this._batchCount; b++) {
             const batch = this._batches[b];
-            Object3dRendererWebGLBloom._applyState(gl, loc, batch.state);
+            WebGLBloom._applyState(gl, loc, batch.state);
             if (batch.texture !== null) {
                 gl.uniform1i(loc.hasTex, 1);
                 gl.activeTexture(gl.TEXTURE0);
@@ -130,7 +130,7 @@ class Object3dRendererWebGLBloom {
             }
             gl.bufferData(gl.ARRAY_BUFFER, this._glowData.subarray(batch.start, (batch.start + batch.count)), gl.DYNAMIC_DRAW);
             renderer._bindVertexLayout(gl);
-            gl.drawArrays(gl.TRIANGLES, 0, (batch.count / Object3dRendererWebGLBloom.VERTEX_FLOATS));
+            gl.drawArrays(gl.TRIANGLES, 0, (batch.count / WebGLBloom.VERTEX_FLOATS));
         }
         gl.depthFunc(gl.LESS);
         gl.depthMask(true);
@@ -223,25 +223,25 @@ class Object3dRendererWebGLBloom {
         this._width        = width;
         this._height       = height;
         this._levelCount   = levelCount;
-        this._sceneTexture = Object3dRendererWebGLBloom._texture(gl, width, height);
-        this._glowTexture  = Object3dRendererWebGLBloom._texture(gl, width, height);
+        this._sceneTexture = WebGLBloom._texture(gl, width, height);
+        this._glowTexture  = WebGLBloom._texture(gl, width, height);
         this._depthBuffer  = gl.createRenderbuffer();
         gl.bindRenderbuffer(gl.RENDERBUFFER, this._depthBuffer);
         gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_STENCIL, width, height);
-        this._sceneFbo = Object3dRendererWebGLBloom._framebuffer(gl, this._sceneTexture, this._depthBuffer);
-        this._glowFbo  = Object3dRendererWebGLBloom._framebuffer(gl, this._glowTexture, this._depthBuffer);
+        this._sceneFbo = WebGLBloom._framebuffer(gl, this._sceneTexture, this._depthBuffer);
+        this._glowFbo  = WebGLBloom._framebuffer(gl, this._glowTexture, this._depthBuffer);
         let levelWidth  = Math.max(1, Math.round(width * resolution));
         let levelHeight = Math.max(1, Math.round(height * resolution));
         for (let i = 0; i < levelCount; i++) {
-            const textureA = Object3dRendererWebGLBloom._texture(gl, levelWidth, levelHeight);
-            const textureB = Object3dRendererWebGLBloom._texture(gl, levelWidth, levelHeight);
+            const textureA = WebGLBloom._texture(gl, levelWidth, levelHeight);
+            const textureB = WebGLBloom._texture(gl, levelWidth, levelHeight);
             this._levels.push({
                 width:    levelWidth,
                 height:   levelHeight,
                 textureA: textureA,
-                fboA:     Object3dRendererWebGLBloom._framebuffer(gl, textureA, null),
+                fboA:     WebGLBloom._framebuffer(gl, textureA, null),
                 textureB: textureB,
-                fboB:     Object3dRendererWebGLBloom._framebuffer(gl, textureB, null)
+                fboB:     WebGLBloom._framebuffer(gl, textureB, null)
             });
             levelWidth  = Math.max(1, Math.floor(levelWidth / 2));
             levelHeight = Math.max(1, Math.floor(levelHeight / 2));
@@ -303,13 +303,13 @@ class Object3dRendererWebGLBloom {
     _compose(gl, engine) {
         const levelCount = this._levels.length;
         const compose    = this._composeProgram(gl, levelCount);
-        const weights    = Object3dRendererWebGLBloom._param(engine.bloom, 'levelWeights');
+        const weights    = WebGLBloom._param(engine.bloom, 'levelWeights');
         let total = 0;
         for (let i = 0; i < levelCount; i++) {
             total += (weights[i] ?? 0);
         }
-        for (let i = 0; i < Object3dRendererWebGLBloom.MAX_LEVELS; i++) {
-            this._weights[i] = ((i < levelCount) ? (((weights[i] ?? 0) / total) * Object3dRendererWebGLBloom._param(engine.bloom, 'strength')) : 0);
+        for (let i = 0; i < WebGLBloom.MAX_LEVELS; i++) {
+            this._weights[i] = ((i < levelCount) ? (((weights[i] ?? 0) / total) * WebGLBloom._param(engine.bloom, 'strength')) : 0);
         }
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
         gl.viewport(0, 0, engine.scrWidth, engine.scrHeight);
@@ -346,7 +346,7 @@ class Object3dRendererWebGLBloom {
         gl.bindBuffer(gl.ARRAY_BUFFER, this._quadVbo);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1]), gl.STATIC_DRAW);
 
-        this._downProgram = Object3dRendererWebGLBloom._link(gl, Object3dRendererWebGLBloom.QUAD_VERTEX, `
+        this._downProgram = WebGLBloom._link(gl, WebGLBloom.QUAD_VERTEX, `
             precision mediump float;
             uniform sampler2D u_source;
             uniform vec2      u_texel;
@@ -369,8 +369,8 @@ class Object3dRendererWebGLBloom {
             texel:  gl.getUniformLocation(this._downProgram, 'u_texel')
         };
 
-        const w = Object3dRendererWebGLBloom.BLUR_WEIGHTS;
-        this._blurProgram = Object3dRendererWebGLBloom._link(gl, Object3dRendererWebGLBloom.QUAD_VERTEX, `
+        const w = WebGLBloom.BLUR_WEIGHTS;
+        this._blurProgram = WebGLBloom._link(gl, WebGLBloom.QUAD_VERTEX, `
             precision mediump float;
             uniform sampler2D u_source;
             uniform vec2      u_step;
@@ -402,11 +402,11 @@ class Object3dRendererWebGLBloom {
             samplers += 'uniform sampler2D u_level' + i + ';\n';
             sum      += 'bloom += texture2D(u_level' + i + ', v_uv).rgb * u_weights[' + i + '];\n';
         }
-        const program = Object3dRendererWebGLBloom._link(gl, Object3dRendererWebGLBloom.QUAD_VERTEX, `
+        const program = WebGLBloom._link(gl, WebGLBloom.QUAD_VERTEX, `
             precision mediump float;
             uniform sampler2D u_scene;
             uniform vec2      u_texel;
-            uniform float     u_weights[${Object3dRendererWebGLBloom.MAX_LEVELS}];
+            uniform float     u_weights[${WebGLBloom.MAX_LEVELS}];
             ${samplers}
             varying vec2      v_uv;
             const vec3 LUMA = vec3(0.299, 0.587, 0.114);
@@ -425,9 +425,9 @@ class Object3dRendererWebGLBloom {
                 float lMin = min(lM, min(min(lNw, lNe), min(lSw, lSe)));
                 float lMax = max(lM, max(max(lNw, lNe), max(lSw, lSe)));
                 vec2 dir = vec2(-((lNw + lNe) - (lSw + lSe)), ((lNw + lSw) - (lNe + lSe)));
-                float reduce = max((lNw + lNe + lSw + lSe) * 0.25 * ${Object3dRendererWebGLBloom.FXAA_REDUCE_MUL.toFixed(6)}, ${Object3dRendererWebGLBloom.FXAA_REDUCE_MIN.toFixed(6)});
+                float reduce = max((lNw + lNe + lSw + lSe) * 0.25 * ${WebGLBloom.FXAA_REDUCE_MUL.toFixed(6)}, ${WebGLBloom.FXAA_REDUCE_MIN.toFixed(6)});
                 float rcpMin = 1.0 / (min(abs(dir.x), abs(dir.y)) + reduce);
-                dir = clamp(dir * rcpMin, vec2(-${Object3dRendererWebGLBloom.FXAA_SPAN_MAX.toFixed(1)}), vec2(${Object3dRendererWebGLBloom.FXAA_SPAN_MAX.toFixed(1)})) * u_texel;
+                dir = clamp(dir * rcpMin, vec2(-${WebGLBloom.FXAA_SPAN_MAX.toFixed(1)}), vec2(${WebGLBloom.FXAA_SPAN_MAX.toFixed(1)})) * u_texel;
                 vec3 a = 0.5 * (texture2D(u_scene, uv + dir * (1.0 / 3.0 - 0.5)).rgb + texture2D(u_scene, uv + dir * (2.0 / 3.0 - 0.5)).rgb);
                 vec3 b = a * 0.5 + 0.25 * (texture2D(u_scene, uv - dir * 0.5).rgb + texture2D(u_scene, uv + dir * 0.5).rgb);
                 float lB = dot(b, LUMA);
@@ -472,29 +472,29 @@ class Object3dRendererWebGLBloom {
     }
 
     static _applyState(gl, loc, state) {
-        gl.uniform1f(loc.sx, state[Object3dRendererWebGLBloom.STATE_SX]);
-        gl.uniform1f(loc.sy, state[Object3dRendererWebGLBloom.STATE_SY]);
-        gl.uniform1f(loc.ox, state[Object3dRendererWebGLBloom.STATE_OX]);
-        gl.uniform1f(loc.oy, state[Object3dRendererWebGLBloom.STATE_OY]);
-        gl.uniform1f(loc.w, state[Object3dRendererWebGLBloom.STATE_W]);
-        gl.uniform1f(loc.h, state[Object3dRendererWebGLBloom.STATE_H]);
-        gl.uniform1f(loc.near, state[Object3dRendererWebGLBloom.STATE_NEAR]);
-        gl.uniform1f(loc.far, state[Object3dRendererWebGLBloom.STATE_FAR]);
-        gl.uniform1f(loc.depthBias, state[Object3dRendererWebGLBloom.STATE_DEPTH_BIAS]);
-        gl.uniform1f(loc.dsVis, state[Object3dRendererWebGLBloom.STATE_DS_VIS]);
-        gl.uniform1f(loc.dsVisMax, state[Object3dRendererWebGLBloom.STATE_DS_VIS_MAX]);
-        gl.uniform1f(loc.dsBase, state[Object3dRendererWebGLBloom.STATE_DS_BASE]);
-        gl.uniform1f(loc.dsScale, state[Object3dRendererWebGLBloom.STATE_DS_SCALE]);
-        gl.uniform1f(loc.dsRamp, state[Object3dRendererWebGLBloom.STATE_DS_RAMP]);
-        gl.uniform1f(loc.dsStrength, state[Object3dRendererWebGLBloom.STATE_DS_STRENGTH]);
-        gl.uniform1f(loc.alpha, state[Object3dRendererWebGLBloom.STATE_ALPHA]);
-        gl.uniform1i(loc.clampV, state[Object3dRendererWebGLBloom.STATE_CLAMP_V]);
-        gl.uniform1f(loc.lightFloor, state[Object3dRendererWebGLBloom.STATE_LIGHT_FLOOR]);
-        gl.uniform1f(loc.lightBoost, state[Object3dRendererWebGLBloom.STATE_LIGHT_BOOST]);
+        gl.uniform1f(loc.sx, state[WebGLBloom.STATE_SX]);
+        gl.uniform1f(loc.sy, state[WebGLBloom.STATE_SY]);
+        gl.uniform1f(loc.ox, state[WebGLBloom.STATE_OX]);
+        gl.uniform1f(loc.oy, state[WebGLBloom.STATE_OY]);
+        gl.uniform1f(loc.w, state[WebGLBloom.STATE_W]);
+        gl.uniform1f(loc.h, state[WebGLBloom.STATE_H]);
+        gl.uniform1f(loc.near, state[WebGLBloom.STATE_NEAR]);
+        gl.uniform1f(loc.far, state[WebGLBloom.STATE_FAR]);
+        gl.uniform1f(loc.depthBias, state[WebGLBloom.STATE_DEPTH_BIAS]);
+        gl.uniform1f(loc.dsVis, state[WebGLBloom.STATE_DS_VIS]);
+        gl.uniform1f(loc.dsVisMax, state[WebGLBloom.STATE_DS_VIS_MAX]);
+        gl.uniform1f(loc.dsBase, state[WebGLBloom.STATE_DS_BASE]);
+        gl.uniform1f(loc.dsScale, state[WebGLBloom.STATE_DS_SCALE]);
+        gl.uniform1f(loc.dsRamp, state[WebGLBloom.STATE_DS_RAMP]);
+        gl.uniform1f(loc.dsStrength, state[WebGLBloom.STATE_DS_STRENGTH]);
+        gl.uniform1f(loc.alpha, state[WebGLBloom.STATE_ALPHA]);
+        gl.uniform1i(loc.clampV, state[WebGLBloom.STATE_CLAMP_V]);
+        gl.uniform1f(loc.lightFloor, state[WebGLBloom.STATE_LIGHT_FLOOR]);
+        gl.uniform1f(loc.lightBoost, state[WebGLBloom.STATE_LIGHT_BOOST]);
     }
 
     static _sameState(a, b) {
-        for (let i = 0; i < Object3dRendererWebGLBloom.STATE_SIZE; i++) {
+        for (let i = 0; i < WebGLBloom.STATE_SIZE; i++) {
             if (a[i] !== b[i]) {
                 return false;
             }
@@ -505,41 +505,41 @@ class Object3dRendererWebGLBloom {
 
     // A bloom parameter, its default when left out.
     static _param(params, name) {
-        return (params[name] ?? Object3dRendererWebGLBloom.DEFAULTS[name]);
+        return (params[name] ?? WebGLBloom.DEFAULTS[name]);
     }
 }
 
-Object3dRendererWebGLBloom.DEFAULTS        = Object.freeze({strength: 2.5, levels: 4, levelWeights: Object.freeze([1.0, 0.8, 0.6, 0.4]), resolution: 0.5, coreWhite: 0.5});
-Object3dRendererWebGLBloom.MAX_LEVELS      = 6;
-Object3dRendererWebGLBloom.VERTEX_FLOATS   = 9;
-Object3dRendererWebGLBloom.MIN_GLOW_FLOATS = 1024;
+WebGLBloom.DEFAULTS        = Object.freeze({strength: 2.5, levels: 4, levelWeights: Object.freeze([1.0, 0.8, 0.6, 0.4]), resolution: 0.5, coreWhite: 0.5});
+WebGLBloom.MAX_LEVELS      = 6;
+WebGLBloom.VERTEX_FLOATS   = 9;
+WebGLBloom.MIN_GLOW_FLOATS = 1024;
 // Gaussian, sigma 2, 9 taps, normalised: the centre, then 1 to 4 texels away.
-Object3dRendererWebGLBloom.BLUR_WEIGHTS    = Object.freeze([0.2042, 0.1802, 0.1238, 0.0663, 0.0276]);
-Object3dRendererWebGLBloom.FXAA_REDUCE_MUL = 1 / 8;
-Object3dRendererWebGLBloom.FXAA_REDUCE_MIN = 1 / 128;
-Object3dRendererWebGLBloom.FXAA_SPAN_MAX   = 8;
+WebGLBloom.BLUR_WEIGHTS    = Object.freeze([0.2042, 0.1802, 0.1238, 0.0663, 0.0276]);
+WebGLBloom.FXAA_REDUCE_MUL = 1 / 8;
+WebGLBloom.FXAA_REDUCE_MIN = 1 / 128;
+WebGLBloom.FXAA_SPAN_MAX   = 8;
 // The values the scene program reads for a draw, in the order of a recorded state.
-Object3dRendererWebGLBloom.STATE_SX          = 0;
-Object3dRendererWebGLBloom.STATE_SY          = 1;
-Object3dRendererWebGLBloom.STATE_OX          = 2;
-Object3dRendererWebGLBloom.STATE_OY          = 3;
-Object3dRendererWebGLBloom.STATE_W           = 4;
-Object3dRendererWebGLBloom.STATE_H           = 5;
-Object3dRendererWebGLBloom.STATE_NEAR        = 6;
-Object3dRendererWebGLBloom.STATE_FAR         = 7;
-Object3dRendererWebGLBloom.STATE_DEPTH_BIAS  = 8;
-Object3dRendererWebGLBloom.STATE_DS_VIS      = 9;
-Object3dRendererWebGLBloom.STATE_DS_VIS_MAX  = 10;
-Object3dRendererWebGLBloom.STATE_DS_BASE     = 11;
-Object3dRendererWebGLBloom.STATE_DS_SCALE    = 12;
-Object3dRendererWebGLBloom.STATE_DS_RAMP     = 13;
-Object3dRendererWebGLBloom.STATE_DS_STRENGTH = 14;
-Object3dRendererWebGLBloom.STATE_ALPHA       = 15;
-Object3dRendererWebGLBloom.STATE_CLAMP_V     = 16;
-Object3dRendererWebGLBloom.STATE_LIGHT_FLOOR = 17;
-Object3dRendererWebGLBloom.STATE_LIGHT_BOOST = 18;
-Object3dRendererWebGLBloom.STATE_SIZE        = 19;
-Object3dRendererWebGLBloom.QUAD_VERTEX       = `
+WebGLBloom.STATE_SX          = 0;
+WebGLBloom.STATE_SY          = 1;
+WebGLBloom.STATE_OX          = 2;
+WebGLBloom.STATE_OY          = 3;
+WebGLBloom.STATE_W           = 4;
+WebGLBloom.STATE_H           = 5;
+WebGLBloom.STATE_NEAR        = 6;
+WebGLBloom.STATE_FAR         = 7;
+WebGLBloom.STATE_DEPTH_BIAS  = 8;
+WebGLBloom.STATE_DS_VIS      = 9;
+WebGLBloom.STATE_DS_VIS_MAX  = 10;
+WebGLBloom.STATE_DS_BASE     = 11;
+WebGLBloom.STATE_DS_SCALE    = 12;
+WebGLBloom.STATE_DS_RAMP     = 13;
+WebGLBloom.STATE_DS_STRENGTH = 14;
+WebGLBloom.STATE_ALPHA       = 15;
+WebGLBloom.STATE_CLAMP_V     = 16;
+WebGLBloom.STATE_LIGHT_FLOOR = 17;
+WebGLBloom.STATE_LIGHT_BOOST = 18;
+WebGLBloom.STATE_SIZE        = 19;
+WebGLBloom.QUAD_VERTEX       = `
     attribute vec2 a_pos;
     varying vec2 v_uv;
     void main() {
