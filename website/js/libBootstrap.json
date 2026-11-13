@@ -1,5 +1,5 @@
 {
-    "version": "v1.0085",
+    "version": "v1.0086",
     "files": {
         "assets": [
             "/lib/libadlmidi/libadlmidi.dosbox.slim.processor.js",
@@ -124,6 +124,7 @@
             "/js/engine/spatialGrid.js",
             "/js/engine/collision.js",
             "/js/webapp/input/appInputMapping.js",
+            "/js/webapp/input/appInputSwipe.js",
             "/js/webapp/input/appInputKeyboard.js",
             "/js/webapp/input/appInputGamepad.js",
             "/js/webapp/input/appInputMouse.js",

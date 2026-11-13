@@ -29,11 +29,13 @@ Run from the repository root, in Node, without a browser:
 node bench/bootstrap.js
 node bench/animation.js
 node bench/bloom.js
+node bench/swipe.js
 ```
 
 - `bootstrap.js` — every file served is declared in `js/libBootstrap.json`, every declared file exists once, each class after the class it extends.
 - `animation.js` — the skeletal animation primitives against known results (interpolations, rotation convention, joints, events, speed jumps, cross-fade, root motion, skinning, objects taken and laid over a transition, animated and static glTF reading, allocations by frame); all must come out `ok`.
 - `bloom.js` — the WebGL renderer driven by a recording fake WebGL context: without bloom nothing changes, with bloom its framebuffers, passes and restored GL state.
+- `swipe.js` — the swipe gestures of the PWA core against fake touch events: threshold, one gesture per slide, a change of direction, several fingers, cancel, queue.
 
 ## The Spipu3D engine
 
@@ -72,7 +74,7 @@ The 3D examples run in a 16:9 letterboxed fullscreen and take keyboard, gamepad 
 ## Architecture
 
 ```
-bench/                        Checks run in Node: bootstrap definitions, animation primitives, bloom
+bench/                        Checks run in Node: bootstrap definitions, animation primitives, bloom, swipes
 website/
 ├── index.html                The showcase shell (PWA): the only page
 ├── appServiceWorker.js       Service Worker — cache-first, offline (must stay at webroot: SW scope)
@@ -89,7 +91,7 @@ website/
     ├── showcase/             The showcase: navigator, menu screens, options and settings (IndexedDB), texts (en + fr + it + es)
     │   └── example/             The examples, each a class run like a level (load, scene, frame loop, back to the menu)
     ├── webapp/               PWA core — bootstrap/versioning, IndexedDB wrapper with versioned schema upgrades, persistent settings, translation catalog, content hash, wake lock, iOS viewport
-    │   ├── input/               Raw input devices: keyboard, mouse, gamepad with rebindable actions, virtual touch gamepad laid out by the page
+    │   ├── input/               Raw input devices: keyboard, mouse, gamepad with rebindable actions, virtual touch gamepad laid out by the page, swipe gestures
     │   ├── menu/                Building blocks of DOM menus: letterboxed display, list navigation (mouse, keyboard, gamepad, touch), modals, settings pages, on-screen keyboard, the multiplayer entry, pairing and lobby modals, their texts
     │   ├── net/                 Peer-to-peer network layer — WebRTC and loopback links, compact signals, pairing codes and flows, messages, ping, star sessions; the game session over them — protocol, lobby, main and sub sessions with the game's hooks, synchronous turn cycle, on-screen notice
     │   └── qr/                  QR code writing, camera scanning, camera probe and the pairing view (code shown, code read)
