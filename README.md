@@ -28,10 +28,12 @@ Run from the repository root, in Node, without a browser:
 ```bash
 node bench/bootstrap.js
 node bench/animation.js
+node bench/bloom.js
 ```
 
 - `bootstrap.js` — every file served is declared in `js/libBootstrap.json`, every declared file exists once, each class after the class it extends.
 - `animation.js` — the skeletal animation primitives against known results (interpolations, rotation convention, joints, events, speed jumps, cross-fade, root motion, skinning, objects taken and laid over a transition, animated and static glTF reading, allocations by frame); all must come out `ok`.
+- `bloom.js` — the WebGL renderer driven by a recording fake WebGL context: without bloom nothing changes, with bloom its framebuffers, passes and restored GL state.
 
 ## The Spipu3D engine
 
@@ -48,6 +50,8 @@ Four rendering modes are available (the **Renderer** of *Options › Display* sw
 | `flat` | Painter's algorithm with flat shading — one colour per face, the average colour of its texture — on a neutral grey backdrop |
 | `fast` | Wireframe — no lighting, canvas 2D paths only, on the same grey backdrop |
 
+With the WebGL renderer, faces marked `glow` can get a bloom (`engine.setBloom({})`): a halo of their colour and a core going towards white, the scene anti-aliased by FXAA; without it the renderer draws exactly as before.
+
 Whatever the mode, instances are frustum-culled in camera space before any per-vertex work. The static collision geometry is indexed once per world in a uniform XZ spatial grid, so every floor/wall/ray query only tests the triangles of the cells it touches; dynamic movers stay on a linear scan.
 
 ## Examples
@@ -56,7 +60,7 @@ Whatever the mode, instances are frustum-culled in camera space before any per-v
 |---|---|
 | Still render | The Lotus F1, no interaction |
 | Objects | A list of objects, then the object alone, turned by the mouse, a finger or the movement stick |
-| Lights | Coloured light sources — move them around |
+| Lights | Coloured light sources shown by glowing balls (bloom with WebGL) — move them around |
 | Van | Drive the van |
 | Labyrinth | First-person navigation inside a 3D labyrinth, FPS physics |
 | Animation | A skeletal character read from glTF walking on an endless ground, the camera behind it: up walks, down walks back, left / right side-step, turn while walking, the walking pace following the stick, and run forward with the run control, the run cycle taking over past twice the walking pace (arrow keys or movement stick); motion capture from the [CMU Graphics Lab Motion Capture Database](http://mocap.cs.cmu.edu) (funded by NSF EIA-0196217) |
@@ -68,7 +72,7 @@ The 3D examples run in a 16:9 letterboxed fullscreen and take keyboard, gamepad 
 ## Architecture
 
 ```
-bench/                        Checks run in Node: bootstrap definitions, animation primitives
+bench/                        Checks run in Node: bootstrap definitions, animation primitives, bloom
 website/
 ├── index.html                The showcase shell (PWA): the only page
 ├── appServiceWorker.js       Service Worker — cache-first, offline (must stay at webroot: SW scope)

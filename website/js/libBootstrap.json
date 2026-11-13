@@ -1,5 +1,5 @@
 {
-    "version": "v1.0079",
+    "version": "v1.0085",
     "files": {
         "assets": [
             "/lib/libadlmidi/libadlmidi.dosbox.slim.processor.js",
@@ -15,7 +15,6 @@
             "/assets/objects/head.obj.json",
             "/assets/objects/helico_civil.obj.json",
             "/assets/objects/helico_military.obj.json",
-            "/assets/objects/light.obj.json",
             "/assets/objects/lotus.obj.json",
             "/assets/objects/plane.obj.json",
             "/assets/objects/ship.obj.json",
@@ -118,6 +117,7 @@
             "/js/engine/renderer/object3dRendererFast.js",
             "/js/engine/renderer/object3dRendererFull.js",
             "/js/engine/renderer/object3dRendererFlat.js",
+            "/js/engine/renderer/object3dRendererWebGLBloom.js",
             "/js/engine/renderer/object3dRendererWebGL.js",
             "/js/engine/renderer/object3dRendererList.js",
             "/js/engine/engine3d.js",

@@ -305,10 +305,10 @@ class ShowcaseTranslations {
                 es: 'Luces'
             },
             'example.lights.infos': {
-                fr: 'Trois sources colorées, déplacées au clavier',
-                en: 'Three coloured sources, moved with the keyboard',
-                it: 'Tre sorgenti colorate, spostate con la tastiera',
-                es: 'Tres fuentes de color, movidas con el teclado'
+                fr: 'Trois sources colorées et lumineuses, déplacées au clavier',
+                en: 'Three coloured glowing sources, moved with the keyboard',
+                it: 'Tre sorgenti colorate e luminose, spostate con la tastiera',
+                es: 'Tres fuentes de color luminosas, movidas con el teclado'
             },
             'example.van': {
                 fr: 'Fourgon',
