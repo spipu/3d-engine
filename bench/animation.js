@@ -115,6 +115,7 @@ class AnimationBench {
         this._gltfRefusals();
         this._staticGltf();
         this._staticGltfRefusals();
+        this._glowAndAdditive();
         await this._allocations();
         console.log((this._failures === 0) ? 'animation: all checks passed' : ('animation: ' + this._failures + ' check(s) failed'));
 
@@ -673,6 +674,26 @@ class AnimationBench {
         this._equal('static: material color and extras', JSON.stringify([data.faces[0].color, model.getMaterials()[0].extras]), '[[255,0,0],{"paletteIndex":105}]');
         const mirrored = model.toObjectData(this.ModelMesh.materialColor, true);
         this._near('static mirrored: x back to the glTF side', close(mirrored.points.flat(), [1, 0, 0, 2, 0, 0, 1, 1, 0]), 0, 0);
+    }
+
+    // Glowing and additive faces: read from object data and from a glTF material's extras, every other face off.
+    _glowAndAdditive() {
+        const id     = this.loader.objects().loadFromData(null, {
+            points: [[0, 0, 0], [1, 0, 0], [0, 1, 0]],
+            faces:  [{pts: [1, 2, 3], color: [9, 9, 9], glow: true}, {pts: [1, 3, 2], color: [9, 9, 9], blendAdd: true}, {pts: [1, 2, 3], color: [9, 9, 9]}]
+        });
+        const object = this.loader.objects().get(id);
+        const flags  = object.faceList.map((fc) => [fc.glow, fc.blendAdd]);
+        this._equal('object data: glow, additive, plain', JSON.stringify(flags), '[[true,false],[false,true],[false,false]]');
+        this._equal('object data: an additive face is translucent', String(object.isTranslucent()), 'true');
+
+        const {gltf, binary} = AnimationBench._staticGltfModel();
+        gltf.materials[0].extras.glow = true;
+        const model = this.loader.staticModels().get(this.loader.staticModels().loadFromData('bench_glow', {gltf, binary}));
+        this._equal('glTF: glowing material, both sides', JSON.stringify(model.toObjectData().faces.map((face) => face.glow)), '[true,true]');
+        const plain = AnimationBench._staticGltfModel();
+        const plainModel = this.loader.staticModels().get(this.loader.staticModels().loadFromData('bench_plain', plain));
+        this._equal('glTF: plain material, no glow key', JSON.stringify(plainModel.toObjectData().faces.map((face) => ('glow' in face))), '[false,false]');
     }
 
     _staticGltfRefusals() {
