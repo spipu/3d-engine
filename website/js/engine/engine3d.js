@@ -122,7 +122,7 @@ class Engine3d {
     }
 
     // WebGL only, null to disable: the faces marked glow get a halo of their colour, their core goes towards white.
-    //   {strength, levels, levelWeights, resolution, coreWhite}, each optional (WebGLBloom.DEFAULTS)
+    //   {strength, levels, levelWeights, resolution, coreWhite}, each optional (RendererWebglBloom.DEFAULTS)
     setBloom(params) {
         this.bloom = params;
         return this;

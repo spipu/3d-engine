@@ -1,5 +1,5 @@
 {
-    "version": "v1.0087",
+    "version": "v1.0088",
     "files": {
         "assets": [
             "/lib/libadlmidi/libadlmidi.dosbox.slim.processor.js",
@@ -112,12 +112,12 @@
             "/js/engine/animation/animationPlayer.js",
             "/js/engine/animation/animatedInstance.js",
             "/js/engine/zBuffer.js",
-            "/js/engine/renderer/faceDepthQueue.js",
+            "/js/engine/renderer/base/faceDepthQueue.js",
             "/js/engine/renderer/object3dRendererBase.js",
             "/js/engine/renderer/object3dRendererFast.js",
             "/js/engine/renderer/object3dRendererFull.js",
             "/js/engine/renderer/object3dRendererFlat.js",
-            "/js/engine/renderer/webgl/webGLBloom.js",
+            "/js/engine/renderer/webgl/bloom.js",
             "/js/engine/renderer/object3dRendererWebGL.js",
             "/js/engine/renderer/object3dRendererList.js",
             "/js/engine/engine3d.js",
