@@ -52,7 +52,7 @@ Four rendering modes are available (the **Renderer** of *Options › Display* sw
 | `flat` | Painter's algorithm with flat shading — one colour per face, the average colour of its texture — on a neutral grey backdrop |
 | `fast` | Wireframe — no lighting, canvas 2D paths only, on the same grey backdrop |
 
-With the WebGL renderer, faces marked `glow` can get a bloom (`engine.setBloom({})`): a halo of their colour and a core going towards white, the scene anti-aliased by FXAA; without it the renderer draws exactly as before.
+With the WebGL renderer, faces marked `glow` can get a bloom (`engine.setBloom({})`): a halo of their colour and a core going towards white, the scene anti-aliased by FXAA; `glowDepthShading` (0 to 1, default 1) sets how much of the depth shading the halo keeps (0: a distant thin line keeps its whole halo); without it the renderer draws exactly as before.
 
 Whatever the mode, instances are frustum-culled in camera space before any per-vertex work. The static collision geometry is indexed once per world in a uniform XZ spatial grid, so every floor/wall/ray query only tests the triangles of the cells it touches; dynamic movers stay on a linear scan.
 
